@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Eye, ShoppingCart } from 'lucide-react';
+import { Eye, ShoppingCart, Star } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 
 interface Product {
@@ -16,6 +16,8 @@ interface Product {
   primary_image: string;
   hover_image: string;
   detail_images: string[];
+  rating?: number;
+  review_count?: number;
 }
 
 interface ProductCardProps {
@@ -55,11 +57,15 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
           </span>
         )}
 
-        {product.is_low_stock && (
+        {product.stock_quantity === 0 ? (
+          <span className="absolute top-4 right-4 px-3 py-1 bg-gray-800 text-white text-xs font-medium rounded-full">
+            Out of Stock
+          </span>
+        ) : product.stock_quantity < 10 ? (
           <span className="absolute top-4 right-4 px-3 py-1 bg-red-500 text-white text-xs font-medium rounded-full">
             Low Stock
           </span>
-        )}
+        ) : null}
 
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-smooth flex items-center justify-center">
           <button
@@ -83,6 +89,17 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
           <p className="text-sm text-gray-600 dark:text-gray-400">
             {product.material} • {product.color}
           </p>
+          <div className="flex items-center mt-1">
+            <Star className="w-4 h-4 text-yellow-400 fill-current" />
+            <span className="ml-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+              {product.rating ? product.rating.toFixed(1) : 'New'}
+            </span>
+            {product.review_count ? (
+              <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                ({product.review_count})
+              </span>
+            ) : null}
+          </div>
         </div>
 
         <div className="flex items-center justify-between">

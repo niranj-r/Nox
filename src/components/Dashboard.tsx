@@ -47,8 +47,7 @@ export default function Dashboard() {
     try {
       const q = query(
         collection(db, 'orders'),
-        where('user_id', '==', user.uid),
-        orderBy('created_at', 'desc')
+        where('user_id', '==', user.uid)
       );
       const querySnapshot = await getDocs(q);
 
@@ -58,9 +57,9 @@ export default function Dashboard() {
           id: doc.id,
           ...data,
           created_at: data.created_at.toDate ? data.created_at.toDate().toISOString() : data.created_at,
-          payment_confirmed_at: data.payment_confirmed_at ? data.payment_confirmed_at : null // Timestamp handling if needed, but string in code
+          payment_confirmed_at: data.payment_confirmed_at ? data.payment_confirmed_at : null
         } as Order;
-      });
+      }).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
       setOrders(ordersData);
     } catch (error) {
@@ -76,8 +75,12 @@ export default function Dashboard() {
         return <Clock className="w-5 h-5 text-yellow-500" />;
       case 'payment_confirmed':
         return <CheckCircle className="w-5 h-5 text-green-500" />;
+      case 'packing':
+        return <Package className="w-5 h-5 text-purple-500" />;
       case 'shipped':
         return <Truck className="w-5 h-5 text-blue-500" />;
+      case 'out_for_delivery':
+        return <Truck className="w-5 h-5 text-orange-500" />;
       default:
         return <Package className="w-5 h-5 text-gray-500" />;
     }
@@ -91,8 +94,12 @@ export default function Dashboard() {
         return 'Payment Under Review';
       case 'payment_confirmed':
         return 'Payment Confirmed';
+      case 'packing':
+        return 'Packing';
       case 'shipped':
-        return 'Shipped';
+        return 'Dispatched';
+      case 'out_for_delivery':
+        return 'Out for Delivery';
       case 'delivered':
         return 'Delivered';
       default:
@@ -107,8 +114,13 @@ export default function Dashboard() {
       case 'payment_under_review':
         return 50;
       case 'payment_confirmed':
-        return 75;
+        return 40;
+      case 'packing':
+        return 60;
       case 'shipped':
+        return 80;
+      case 'out_for_delivery':
+        return 90;
       case 'delivered':
         return 100;
       default:

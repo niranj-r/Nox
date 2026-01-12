@@ -15,6 +15,7 @@ import { db } from '../lib/firebase';
 import { seedProducts } from '../lib/seedData';
 import { useAuth } from '../contexts/AuthContext';
 import AdminAuth from './AdminAuth';
+import AdminProducts from './AdminProducts';
 
 interface Order {
   id: string;
@@ -44,9 +45,13 @@ interface DiscountCode {
   valid_until: string | null;
 }
 
-export default function AdminPanel() {
+interface AdminPanelProps {
+  onNavigate?: (page: string) => void;
+}
+
+export default function AdminPanel({ onNavigate }: AdminPanelProps) {
   const { isAdmin } = useAuth();
-  const [activeTab, setActiveTab] = useState<'orders' | 'discounts' | 'analytics'>('orders');
+  const [activeTab, setActiveTab] = useState<'orders' | 'discounts' | 'analytics' | 'products'>('orders');
   const [orders, setOrders] = useState<Order[]>([]);
   const [discounts, setDiscounts] = useState<DiscountCode[]>([]);
   const [loading, setLoading] = useState(true);
@@ -267,12 +272,21 @@ export default function AdminPanel() {
             </button>
             <button
               onClick={() => setActiveTab('discounts')}
-              className={`py - 4 border - b - 2 transition - smooth ${activeTab === 'discounts'
+              className={`py-4 border-b-2 transition-smooth ${activeTab === 'discounts'
                 ? 'border-primary dark:border-accent text-primary dark:text-accent'
                 : 'border-transparent text-gray-600 dark:text-gray-400'
                 } `}
             >
               Discount Codes
+            </button>
+            <button
+              onClick={() => setActiveTab('products')}
+              className={`py-4 border-b-2 transition-smooth ${activeTab === 'products'
+                ? 'border-primary dark:border-accent text-primary dark:text-accent'
+                : 'border-transparent text-gray-600 dark:text-gray-400'
+                } `}
+            >
+              Products
             </button>
           </div>
         </div>
@@ -280,10 +294,18 @@ export default function AdminPanel() {
         <div className="p-6">
           {activeTab === 'orders' && (
             <div>
-              <div className="mb-4 flex items-center justify-between">
+              <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-serif font-bold text-gray-900 dark:text-gray-100">
                   Pending Payment Approval
                 </h2>
+                {onNavigate && (
+                  <button
+                    onClick={() => onNavigate('admin-orders')}
+                    className="text-primary dark:text-accent hover:underline text-sm font-medium"
+                  >
+                    Manage All Orders &rarr;
+                  </button>
+                )}
               </div>
 
               {loading ? (
@@ -558,6 +580,8 @@ export default function AdminPanel() {
               </div>
             </div>
           )}
+
+          {activeTab === 'products' && <AdminProducts />}
         </div>
       </div>
     </div>

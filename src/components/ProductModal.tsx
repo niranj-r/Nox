@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, ZoomIn, ShoppingCart } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import ProductReviews from './ProductReviews';
 
 interface Product {
   id: string;
@@ -81,11 +82,10 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(img)}
-                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-smooth ${
-                      selectedImage === img
-                        ? 'border-primary dark:border-accent'
-                        : 'border-gray-200 dark:border-primary'
-                    }`}
+                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-smooth ${selectedImage === img
+                      ? 'border-primary dark:border-accent'
+                      : 'border-gray-200 dark:border-primary'
+                      }`}
                   >
                     <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
                   </button>
@@ -99,11 +99,15 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                   <span className="px-3 py-1 bg-gray-100 dark:bg-primary text-gray-700 dark:text-gray-300 text-sm rounded-full">
                     {product.collection}
                   </span>
-                  {product.is_low_stock && (
-                    <span className="px-3 py-1 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-full">
-                      Only {product.stock_quantity} left
+                  {product.stock_quantity === 0 ? (
+                    <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm rounded-full">
+                      Out of Stock
                     </span>
-                  )}
+                  ) : product.stock_quantity < 10 ? (
+                    <span className="px-3 py-1 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-full">
+                      Low Stock: Only {product.stock_quantity} left
+                    </span>
+                  ) : null}
                 </div>
 
                 <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
@@ -165,6 +169,15 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
               </div>
             </div>
           </div>
+
+          <div className="px-6 pb-6">
+            <ProductReviews
+              productId={product.id}
+              onReviewAdded={(newRating, newCount) => {
+                console.log('Review added', newRating, newCount);
+              }}
+            />
+          </div>
         </div>
       </div>
 
@@ -181,7 +194,8 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
             />
           </div>
         </div>
-      )}
+      )
+      }
     </>
   );
 }

@@ -7,8 +7,9 @@ import CartSidebar from './components/CartSidebar';
 import Checkout from './components/Checkout';
 import Dashboard from './components/Dashboard';
 import AdminPanel from './components/AdminPanel';
+import AdminOrders from './components/AdminOrders';
 
-type Page = 'home' | 'checkout' | 'dashboard' | 'profile' | 'admin';
+type Page = 'home' | 'checkout' | 'dashboard' | 'profile' | 'admin' | 'admin-orders';
 
 function App() {
   const { loading } = useAuth();
@@ -55,7 +56,8 @@ function App() {
         />
       )}
       {currentPage === 'dashboard' && <Dashboard />}
-      {currentPage === 'admin' && <AdminPanel />}
+      {currentPage === 'admin' && <AdminPanel onNavigate={(page) => setCurrentPage(page as Page)} />}
+      {currentPage === 'admin-orders' && <AdminOrders onBack={() => setCurrentPage('admin')} />}
 
       {showAuth && (
         <AuthModal

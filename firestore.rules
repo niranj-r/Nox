@@ -11,10 +11,17 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == userId;
     }
 
-    // Products: Public read, Admin write
+    // Products: Public read, Admin write, User update (rating)
     match /products/{productId} {
       allow read: if true;
       allow write: if isAdmin();
+      allow update: if request.auth != null; // Allow users to update rating
+    }
+
+    // Reviews: Public read, Auth create
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if request.auth != null;
     }
 
     // Profiles: Owner read/write, Admin read
@@ -25,7 +32,8 @@ service cloud.firestore {
 
     // Cart Items: Owner read/write
     match /cart_items/{itemId} {
-      allow read, write: if request.auth != null && request.resource.data.user_id == request.auth.uid || resource.data.user_id == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.user_id == request.auth.uid;
+      allow read, update, delete: if request.auth != null && resource.data.user_id == request.auth.uid;
     }
 
     // Orders: Owner create/read, Admin read/write
@@ -42,9 +50,6 @@ service cloud.firestore {
     }
 
     // Admin Users:
-    // 1. Allow checking own status (fixes the User's error)
-    // 2. Allow creation if authenticated (needed for the client-side Secret Key signup to work)
-    //    Note: In a real production app, this should be done via Cloud Functions or prevented.
     match /admin_users/{userId} {
       allow read: if isOwner(userId); 
       allow write: if isOwner(userId); 

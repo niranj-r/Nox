@@ -5,9 +5,8 @@ import {
   query,
   where,
   getDocs,
-  addDoc,
-  updateDoc,
-  doc,
+  updateDoc, // re-added
+  doc,       // re-added
   getDoc,
   runTransaction
 } from 'firebase/firestore';
@@ -115,47 +114,92 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
     try {
       const orderNo = generateOrderNumber();
       const billId = generateBillId();
+
       const totalAmount = getTotalPrice();
       const discountAmount = discount?.amount || 0;
       const finalAmount = totalAmount - discountAmount;
+      const newOrderRef = doc(collection(db, 'orders'));
 
-      const orderItems = items.map((item) => ({
-        product_id: item.product_id,
-        quantity: item.quantity,
-        unit_price: item.product?.price || 0,
-        total_price: (item.product?.price || 0) * item.quantity,
-        product: { // Store product details directly for history
-          name: item.product?.name,
-          primary_image: item.product?.primary_image,
-        },
-        product_snapshot: { // Backup for compatibility
-          name: item.product?.name,
-          image: item.product?.primary_image,
-        },
-      }));
+      await runTransaction(db, async (transaction) => {
+        // 1. Reads: Check specific stock for all items
+        const productReads = await Promise.all(items.map(async (item) => {
+          const productDocRef = doc(db, 'products', item.product_id);
+          const productDoc = await transaction.get(productDocRef);
+          return {
+            ref: productDocRef,
+            doc: productDoc,
+            cartItem: item,
+            name: item.product?.name
+          };
+        }));
 
-      const orderRef = await addDoc(collection(db, 'orders'), {
-        user_id: user.uid,
-        order_no: orderNo,
-        bill_id: billId,
-        status: 'pending_payment',
-        total_amount: totalAmount,
-        discount_code: discount?.code || null,
-        discount_amount: discountAmount,
-        final_amount: finalAmount,
-        shipping_address: profile.shipping_address,
-        phone: profile.phone,
-        created_at: new Date(),
-        order_items: orderItems // Storing items array in order doc
+        // 2. Logic & Validations
+        const orderItems = [];
+
+        for (const { doc, cartItem, name } of productReads) {
+          if (!doc.exists()) {
+            throw new Error(`Product ${name} no longer exists.`);
+          }
+
+          const productData = doc.data();
+          if (productData.stock_quantity < cartItem.quantity) {
+            throw new Error(`Insufficient stock for ${productData.name}. Available: ${productData.stock_quantity}`);
+          }
+
+          orderItems.push({
+            product_id: cartItem.product_id,
+            quantity: cartItem.quantity,
+            unit_price: productData.price,
+            total_price: productData.price * cartItem.quantity,
+            product: {
+              name: productData.name,
+              primary_image: productData.primary_image,
+            },
+            product_snapshot: {
+              name: productData.name,
+              image: productData.primary_image,
+            }
+          });
+        }
+
+        // 3. Writes
+        for (const { ref: productRef, doc: productDoc, cartItem } of productReads) {
+          const productData = productDoc.data();
+          if (!productData) continue; // Should not happen due to check above
+          const newStock = productData.stock_quantity - cartItem.quantity;
+          const isLowStock = newStock < 10;
+          transaction.update(productRef, {
+            stock_quantity: newStock,
+            is_low_stock: isLowStock
+          });
+        }
+
+        transaction.set(newOrderRef, {
+          user_id: user.uid,
+          order_no: orderNo,
+          bill_id: billId,
+          status: 'pending_payment',
+          total_amount: totalAmount,
+          discount_code: discount?.code || null,
+          discount_amount: discountAmount,
+          final_amount: finalAmount,
+          shipping_address: profile.shipping_address,
+          phone: profile.phone,
+          created_at: new Date(),
+          order_items: orderItems
+        });
       });
 
+      // Discount update (kept optimistic/simple to avoid transaction limit/contention)
       if (discount?.id) {
         try {
-          await updateDoc(doc(db, 'discount_codes', discount.id), {
-            current_uses: (await getDoc(doc(db, 'discount_codes', discount.id))).data()?.current_uses + 1 || 1
-          });
+          const discountRef = doc(db, 'discount_codes', discount.id);
+          const dSnap = await getDoc(discountRef);
+          if (dSnap.exists()) {
+            await updateDoc(discountRef, { current_uses: (dSnap.data().current_uses || 0) + 1 });
+          }
         } catch (e) {
-          console.error("Failed to increment discount usage", e);
+          console.error("Discount update failed", e);
         }
       }
 
@@ -167,10 +211,10 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
       const whatsappUrl = `https://wa.me/?text=${whatsappMessage}`;
       window.open(whatsappUrl, '_blank');
 
-      onSuccess(orderRef.id);
-    } catch (error) {
+      onSuccess(newOrderRef.id);
+    } catch (error: any) {
       console.error('Checkout error:', error);
-      alert('An error occurred during checkout. Please try again.');
+      alert(error.message || 'An error occurred during checkout. Please try again.');
     } finally {
       setLoading(false);
     }
