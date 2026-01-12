@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Eye, ShoppingCart, Star } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 
 interface Product {
@@ -7,115 +7,109 @@ interface Product {
   name: string;
   description: string;
   price: number;
-  material: string;
-  color: string;
+  primary_image: string;
+  hover_image?: string;
   collection: string;
   stock_quantity: number;
-  is_limited_edition: boolean;
   is_low_stock: boolean;
-  primary_image: string;
-  hover_image: string;
-  detail_images: string[];
-  rating?: number;
-  review_count?: number;
+  is_limited_edition?: boolean;
 }
 
 interface ProductCardProps {
   product: Product;
-  onQuickView: (product: Product) => void;
+  onClick: () => void;
 }
 
-export default function ProductCard({ product, onQuickView }: ProductCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
+export default function ProductCard({ product, onClick }: ProductCardProps) {
   const { addToCart } = useCart();
+  const [isHovered, setIsHovered] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [added, setAdded] = useState(false);
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (adding) return;
+
     setAdding(true);
-    await addToCart(product.id);
-    setTimeout(() => setAdding(false), 1000);
+    try {
+      await addToCart(product.id, 1);
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+    } catch (error) {
+      console.error("Add to cart failed:", error);
+    } finally {
+      setAdding(false);
+    }
   };
 
   return (
     <div
-      className="group relative bg-white dark:bg-primary-light rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-smooth cursor-pointer"
+      className="group relative flex flex-col w-full max-w-[400px] mx-auto cursor-pointer p-4 rounded-[1rem] border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 transition-all hover:shadow-xl"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={() => onQuickView(product)}
+      onClick={onClick}
     >
-      <div className="relative aspect-square overflow-hidden">
+      {/* 
+        Image Container 
+        - Rounded extremely heavily (approx 2.5rem / 40px)
+        - Top Right cutout effect simulated by positioning branding/badge
+      */}
+      <div className="relative aspect-[4/5] w-full rounded-[1rem] overflow-hidden bg-gray-100 shadow-sm">
         <img
-          src={isHovered ? product.hover_image : product.primary_image}
+          src={isHovered && product.hover_image ? product.hover_image : product.primary_image}
           alt={product.name}
-          className="w-full h-full object-cover transition-smooth"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
 
-        {product.is_limited_edition && (
-          <span className="absolute top-4 left-4 px-3 py-1 bg-accent text-primary text-xs font-medium rounded-full">
-            Limited Edition
-          </span>
+        {/* 
+          Top Right Badge (The Red Pill) 
+          - Positioned to look like a tab
+        */}
+        {(product.is_limited_edition || product.stock_quantity < 10) && (
+          <div className="absolute top-6 right-6 px-6 py-3 bg-[#FF0000] rounded-full shadow-lg z-10">
+            <span className="text-white font-black uppercase tracking-wider text-xs">
+              {product.stock_quantity === 0 ? "SOLD OUT" :
+                product.stock_quantity < 10 ? "LOW STOCK" :
+                  "LIMITED"}
+            </span>
+          </div>
         )}
-
-        {product.stock_quantity === 0 ? (
-          <span className="absolute top-4 right-4 px-3 py-1 bg-gray-800 text-white text-xs font-medium rounded-full">
-            Out of Stock
-          </span>
-        ) : product.stock_quantity < 10 ? (
-          <span className="absolute top-4 right-4 px-3 py-1 bg-red-500 text-white text-xs font-medium rounded-full">
-            Low Stock
-          </span>
-        ) : null}
-
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-smooth flex items-center justify-center">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onQuickView(product);
-            }}
-            className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-smooth bg-white dark:bg-primary text-primary dark:text-accent px-6 py-3 rounded-lg font-medium flex items-center space-x-2"
-          >
-            <Eye className="w-5 h-5" />
-            <span>Quick View</span>
-          </button>
-        </div>
       </div>
 
-      <div className="p-6">
-        <div className="mb-2">
-          <h3 className="text-lg font-serif font-semibold text-gray-900 dark:text-gray-100 mb-1">
-            {product.name}
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            {product.material} • {product.color}
-          </p>
-          <div className="flex items-center mt-1">
-            <Star className="w-4 h-4 text-yellow-400 fill-current" />
-            <span className="ml-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-              {product.rating ? product.rating.toFixed(1) : 'New'}
-            </span>
-            {product.review_count ? (
-              <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
-                ({product.review_count})
-              </span>
-            ) : null}
+      {/* Content Section */}
+      <div className="pt-6 px-2 flex flex-col flex-1">
+        {/* Title */}
+        <h3 className="font-black text-2xl uppercase leading-none tracking-tight text-black dark:text-white mb-2">
+          {product.name}
+        </h3>
+
+        {/* Description / Subtitle */}
+        <p className="text-gray-500 text-sm leading-snug line-clamp-3 mb-6 font-medium">
+          {product.description}
+        </p>
+
+        {/* Bottom Row: Price & Action */}
+        <div className="mt-auto flex items-center justify-between">
+          {/* Price - Massive & Bold */}
+          <div className="font-black text-3xl tracking-tighter text-black dark:text-white">
+            ${product.price}
           </div>
-        </div>
 
-        <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-primary dark:text-accent">
-            ${product.price.toFixed(2)}
-          </span>
-
+          {/* Action Button - Purple Pill */}
           <button
             onClick={handleAddToCart}
-            disabled={adding || product.stock_quantity === 0}
-            className="p-2 bg-primary dark:bg-accent text-white dark:text-primary rounded-lg hover:bg-primary-light dark:hover:bg-accent-dark transition-smooth disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={product.stock_quantity === 0 || adding}
+            className={`
+              h-14 px-8 rounded-full flex items-center justify-center transition-all duration-300
+              ${product.stock_quantity === 0 ? 'bg-gray-200 cursor-not-allowed opacity-50' :
+                added ? 'bg-green-500 scale-105 shadow-lg shadow-green-500/20' :
+                  'bg-[#C084FC] hover:bg-[#A855F7] hover:scale-105 shadow-lg shadow-purple-500/20'}
+            `}
           >
-            {adding ? (
-              <span className="text-sm">Added!</span>
+            {added ? (
+              <span className="text-white font-bold uppercase tracking-wide">ADDED</span>
             ) : (
-              <ShoppingCart className="w-5 h-5" />
+              <ShoppingCart className={`w-6 h-6 ${product.stock_quantity === 0 ? 'text-gray-400' : 'text-white'}`} strokeWidth={2.5} />
             )}
           </button>
         </div>

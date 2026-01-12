@@ -35,6 +35,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  updateProfile: (data: Partial<Profile>) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -131,6 +132,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAdmin(false);
   };
 
+  const updateProfile = async (data: Partial<Profile>) => {
+    if (!user) return { error: new Error('No user logged in') };
+    try {
+      const docRef = doc(db, 'profiles', user.uid);
+      await setDoc(docRef, data, { merge: true });
+
+      // Update local state
+      setProfile(prev => prev ? { ...prev, ...data } : null);
+
+      return { error: null };
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      return { error: error as Error };
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -142,6 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signOut,
         refreshProfile,
+        updateProfile,
       }}
     >
       {children}

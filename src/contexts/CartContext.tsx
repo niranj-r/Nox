@@ -67,15 +67,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const q = query(collection(db, 'cart_items'), where('user_id', '==', user.uid));
     const querySnapshot = await getDocs(q);
 
-    const cartItems = await Promise.all(querySnapshot.docs.map(async (docSnap) => {
+    const cartItems = (await Promise.all(querySnapshot.docs.map(async (docSnap) => {
       const data = docSnap.data();
+
+      // Self-healing: Delete corrupted items where product_id is not a string
+      if (typeof data.product_id !== 'string') {
+        console.warn("Found corrupted cart item, deleting:", docSnap.id);
+        await deleteDoc(doc(db, 'cart_items', docSnap.id));
+        return null;
+      }
+
       const product = await fetchProductDetails(data.product_id);
       return {
         id: docSnap.id,
         ...data,
         product
       } as CartItem;
-    }));
+    }))).filter(item => item !== null) as CartItem[];
 
     return cartItems;
   };

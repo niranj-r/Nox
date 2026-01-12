@@ -238,7 +238,7 @@ export default function ProductCatalog() {
               <ProductCard
                 key={product.id}
                 product={product}
-                onQuickView={setSelectedProduct}
+                onClick={() => setSelectedProduct(product)}
               />
             ))}
           </div>

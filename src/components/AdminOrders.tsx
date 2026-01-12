@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { ArrowLeft, Search, Filter } from 'lucide-react';
+import { useEffect, useState, Fragment } from 'react';
+import { ArrowLeft, Search, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { collection, query, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
@@ -11,6 +11,15 @@ interface Order {
     final_amount: number;
     created_at: string;
     user_id: string;
+    order_items: {
+        product: {
+            name: string;
+            primary_image: string;
+        };
+        quantity: number;
+        unit_price: number;
+        total_price: number;
+    }[];
     profiles: {
         name: string;
         phone: string;
@@ -26,6 +35,7 @@ export default function AdminOrders({ onBack }: AdminOrdersProps) {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
 
     useEffect(() => {
         loadOrders();
@@ -178,46 +188,96 @@ export default function AdminOrders({ onBack }: AdminOrdersProps) {
                         </thead>
                         <tbody className="divide-y divide-gray-200 dark:divide-primary">
                             {filteredOrders.map((order) => (
-                                <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-primary transition-colors">
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{order.order_no}</div>
-                                        <div className="text-sm text-gray-500 dark:text-gray-400">Bill ID: {order.bill_id}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900 dark:text-gray-100">{order.profiles.name}</div>
-                                        <div className="text-sm text-gray-500 dark:text-gray-400">{order.profiles.phone}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                            ${order.final_amount.toFixed(2)}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-sm text-gray-900 dark:text-gray-100">
-                                            {new Date(order.created_at).toLocaleDateString()}
-                                        </div>
-                                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                                            {new Date(order.created_at).toLocaleTimeString()}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <select
-                                            value={order.status}
-                                            onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                                            className={`text-sm rounded-full px-3 py-1 border-0 cursor-pointer font-medium focus:ring-2 focus:ring-offset-1 focus:ring-primary ${order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                                                order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                                                    order.status === 'payment_confirmed' ? 'bg-blue-100 text-blue-800' :
-                                                        'bg-yellow-100 text-yellow-800'
-                                                }`}
-                                        >
-                                            {statusOptions.map(opt => (
-                                                <option key={opt.value} value={opt.value} className="bg-white text-gray-900">
-                                                    {opt.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </td>
-                                </tr>
+                                <Fragment key={order.id}>
+                                    <tr className="hover:bg-gray-50 dark:hover:bg-primary transition-colors">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center gap-3">
+                                                <button
+                                                    onClick={() => setExpandedOrderId(expandedOrderId === order.id ? null : order.id)}
+                                                    className="text-gray-400 hover:text-primary dark:hover:text-accent transition-colors"
+                                                >
+                                                    {expandedOrderId === order.id ? (
+                                                        <ChevronUp className="w-5 h-5" />
+                                                    ) : (
+                                                        <ChevronDown className="w-5 h-5" />
+                                                    )}
+                                                </button>
+                                                <div>
+                                                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{order.order_no}</div>
+                                                    <div className="text-sm text-gray-500 dark:text-gray-400">Bill ID: {order.bill_id}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900 dark:text-gray-100">{order.profiles.name}</div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">{order.profiles.phone}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                ${order.final_amount.toFixed(2)}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900 dark:text-gray-100">
+                                                {new Date(order.created_at).toLocaleDateString()}
+                                            </div>
+                                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                                                {new Date(order.created_at).toLocaleTimeString()}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <select
+                                                value={order.status}
+                                                onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                                                className={`text-sm rounded-full px-3 py-1 border-0 cursor-pointer font-medium focus:ring-2 focus:ring-offset-1 focus:ring-primary ${order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                                                    order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                                        order.status === 'payment_confirmed' ? 'bg-blue-100 text-blue-800' :
+                                                            'bg-yellow-100 text-yellow-800'
+                                                    }`}
+                                            >
+                                                {statusOptions.map(opt => (
+                                                    <option key={opt.value} value={opt.value} className="bg-white text-gray-900">
+                                                        {opt.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    {expandedOrderId === order.id && (
+                                        <tr>
+                                            <td colSpan={5} className="bg-gray-50 dark:bg-primary-light/50 px-6 py-4">
+                                                <div className="text-sm">
+                                                    <p className="font-bold mb-3 text-gray-700 dark:text-gray-300">Order Items:</p>
+                                                    <div className="grid gap-4">
+                                                        <table className="w-full text-left">
+                                                            <thead>
+                                                                <tr className="border-b border-gray-200 dark:border-primary">
+                                                                    <th className="pb-2 text-xs text-gray-500">Product</th>
+                                                                    <th className="pb-2 text-xs text-gray-500">Qty</th>
+                                                                    <th className="pb-2 text-xs text-gray-500">Price</th>
+                                                                    <th className="pb-2 text-xs text-gray-500">Total</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {order.order_items?.map((item, idx) => (
+                                                                    <tr key={idx} className="border-b border-gray-100 dark:border-primary last:border-0">
+                                                                        <td className="py-2 flex items-center gap-3">
+                                                                            <img src={item.product?.primary_image} alt="" className="w-10 h-10 rounded object-cover" />
+                                                                            <span className="text-gray-900 dark:text-gray-100">{item.product?.name}</span>
+                                                                        </td>
+                                                                        <td className="py-2 text-gray-600 dark:text-gray-400">{item.quantity}</td>
+                                                                        <td className="py-2 text-gray-600 dark:text-gray-400">${item.unit_price}</td>
+                                                                        <td className="py-2 font-medium text-gray-900 dark:text-gray-100">${item.total_price}</td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </Fragment>
                             ))}
                         </tbody>
                     </table>
@@ -228,6 +288,6 @@ export default function AdminOrders({ onBack }: AdminOrdersProps) {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 }

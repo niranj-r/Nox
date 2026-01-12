@@ -8,6 +8,7 @@ import Checkout from './components/Checkout';
 import Dashboard from './components/Dashboard';
 import AdminPanel from './components/AdminPanel';
 import AdminOrders from './components/AdminOrders';
+import UserProfile from './components/UserProfile';
 
 type Page = 'home' | 'checkout' | 'dashboard' | 'profile' | 'admin' | 'admin-orders';
 
@@ -56,6 +57,7 @@ function App() {
         />
       )}
       {currentPage === 'dashboard' && <Dashboard />}
+      {currentPage === 'profile' && <UserProfile />}
       {currentPage === 'admin' && <AdminPanel onNavigate={(page) => setCurrentPage(page as Page)} />}
       {currentPage === 'admin-orders' && <AdminOrders onBack={() => setCurrentPage('admin')} />}
 
