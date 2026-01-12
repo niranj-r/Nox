@@ -1,8 +1,19 @@
 import { useState } from 'react';
 import { MessageCircle, ArrowLeft } from 'lucide-react';
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  updateDoc,
+  doc,
+  getDoc,
+  runTransaction
+} from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
-import { supabase } from '../lib/supabase';
 
 interface CheckoutProps {
   onBack: () => void;
@@ -15,6 +26,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
   const [loading, setLoading] = useState(false);
   const [discountCode, setDiscountCode] = useState('');
   const [discount, setDiscount] = useState<{
+    id: string;
     code: string;
     amount: number;
     type: string;
@@ -23,47 +35,56 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
   const handleApplyDiscount = async () => {
     if (!discountCode.trim()) return;
 
-    const { data, error } = await supabase
-      .from('discount_codes')
-      .select('*')
-      .eq('code', discountCode.toUpperCase())
-      .eq('is_active', true)
-      .maybeSingle();
+    try {
+      const q = query(
+        collection(db, 'discount_codes'),
+        where('code', '==', discountCode.toUpperCase()),
+        where('is_active', '==', true)
+      );
+      const querySnapshot = await getDocs(q);
 
-    if (error || !data) {
-      alert('Invalid discount code');
-      return;
+      if (querySnapshot.empty) {
+        alert('Invalid discount code');
+        return;
+      }
+
+      const docSnap = querySnapshot.docs[0];
+      const data = docSnap.data();
+
+      const now = new Date();
+      if (data.valid_until && new Date(data.valid_until) < now) {
+        alert('Discount code has expired');
+        return;
+      }
+
+      if (data.max_uses && data.current_uses >= data.max_uses) {
+        alert('Discount code has reached maximum uses');
+        return;
+      }
+
+      const total = getTotalPrice();
+      if (total < data.min_order_amount) {
+        alert(`Minimum order amount is $${data.min_order_amount}`);
+        return;
+      }
+
+      let discountAmount = 0;
+      if (data.discount_type === 'percentage') {
+        discountAmount = (total * data.discount_value) / 100;
+      } else {
+        discountAmount = data.discount_value;
+      }
+
+      setDiscount({
+        id: docSnap.id,
+        code: data.code,
+        amount: discountAmount,
+        type: data.discount_type,
+      });
+    } catch (error) {
+      console.error("Error applying discount:", error);
+      alert('Error applying discount');
     }
-
-    const now = new Date();
-    if (data.valid_until && new Date(data.valid_until) < now) {
-      alert('Discount code has expired');
-      return;
-    }
-
-    if (data.max_uses && data.current_uses >= data.max_uses) {
-      alert('Discount code has reached maximum uses');
-      return;
-    }
-
-    const total = getTotalPrice();
-    if (total < data.min_order_amount) {
-      alert(`Minimum order amount is $${data.min_order_amount}`);
-      return;
-    }
-
-    let discountAmount = 0;
-    if (data.discount_type === 'percentage') {
-      discountAmount = (total * data.discount_value) / 100;
-    } else {
-      discountAmount = data.discount_value;
-    }
-
-    setDiscount({
-      code: data.code,
-      amount: discountAmount,
-      type: data.discount_type,
-    });
   };
 
   const generateOrderNumber = () => {
@@ -98,47 +119,44 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
       const discountAmount = discount?.amount || 0;
       const finalAmount = totalAmount - discountAmount;
 
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          user_id: user.id,
-          order_no: orderNo,
-          bill_id: billId,
-          status: 'pending_payment',
-          total_amount: totalAmount,
-          discount_code: discount?.code || null,
-          discount_amount: discountAmount,
-          final_amount: finalAmount,
-          shipping_address: profile.shipping_address,
-          phone: profile.phone,
-        })
-        .select()
-        .single();
-
-      if (orderError) throw orderError;
-
       const orderItems = items.map((item) => ({
-        order_id: order.id,
         product_id: item.product_id,
         quantity: item.quantity,
         unit_price: item.product?.price || 0,
         total_price: (item.product?.price || 0) * item.quantity,
-        product_snapshot: {
+        product: { // Store product details directly for history
+          name: item.product?.name,
+          primary_image: item.product?.primary_image,
+        },
+        product_snapshot: { // Backup for compatibility
           name: item.product?.name,
           image: item.product?.primary_image,
         },
       }));
 
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
+      const orderRef = await addDoc(collection(db, 'orders'), {
+        user_id: user.uid,
+        order_no: orderNo,
+        bill_id: billId,
+        status: 'pending_payment',
+        total_amount: totalAmount,
+        discount_code: discount?.code || null,
+        discount_amount: discountAmount,
+        final_amount: finalAmount,
+        shipping_address: profile.shipping_address,
+        phone: profile.phone,
+        created_at: new Date(),
+        order_items: orderItems // Storing items array in order doc
+      });
 
-      if (itemsError) throw itemsError;
-
-      if (discount?.code) {
-        await supabase.rpc('increment_discount_usage', {
-          discount_code: discount.code,
-        });
+      if (discount?.id) {
+        try {
+          await updateDoc(doc(db, 'discount_codes', discount.id), {
+            current_uses: (await getDoc(doc(db, 'discount_codes', discount.id))).data()?.current_uses + 1 || 1
+          });
+        } catch (e) {
+          console.error("Failed to increment discount usage", e);
+        }
       }
 
       await clearCart();
@@ -149,7 +167,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
       const whatsappUrl = `https://wa.me/?text=${whatsappMessage}`;
       window.open(whatsappUrl, '_blank');
 
-      onSuccess(order.id);
+      onSuccess(orderRef.id);
     } catch (error) {
       console.error('Checkout error:', error);
       alert('An error occurred during checkout. Please try again.');

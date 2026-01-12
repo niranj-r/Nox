@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Filter, SlidersHorizontal } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import ProductCard from './ProductCard';
 import ProductModal from './ProductModal';
 
@@ -18,6 +19,7 @@ interface Product {
   primary_image: string;
   hover_image: string;
   detail_images: string[];
+  created_at?: any;
 }
 
 export default function ProductCatalog() {
@@ -49,12 +51,15 @@ export default function ProductCatalog() {
 
   const loadProducts = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false });
+    try {
+      const q = query(collection(db, 'products'), orderBy('created_at', 'desc'));
+      const querySnapshot = await getDocs(q);
+      const data = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        created_at: doc.data().created_at?.toDate ? doc.data().created_at.toDate().toISOString() : doc.data().created_at
+      })) as Product[];
 
-    if (!error && data) {
       setProducts(data);
 
       const uniqueMaterials = [...new Set(data.map((p) => p.material))];
@@ -64,6 +69,8 @@ export default function ProductCatalog() {
       setMaterials(uniqueMaterials);
       setColors(uniqueColors);
       setCollections(uniqueCollections);
+    } catch (error) {
+      console.error("Error loading products:", error);
     }
 
     setLoading(false);
@@ -92,7 +99,11 @@ export default function ProductCatalog() {
         filtered.sort((a, b) => b.price - a.price);
         break;
       case 'newest':
-        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        filtered.sort((a, b) => {
+          const dateA = new Date(a.created_at).getTime();
+          const dateB = new Date(b.created_at).getTime();
+          return dateB - dateA;
+        });
         break;
     }
 

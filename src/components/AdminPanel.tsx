@@ -1,7 +1,20 @@
+
 import { useEffect, useState } from 'react';
-import { Package, Tag, TrendingUp, Plus, CheckCircle, X } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { Package, Tag, TrendingUp, Plus, CheckCircle, X, Database } from 'lucide-react';
+import {
+  collection,
+  query,
+  orderBy,
+  getDocs,
+  updateDoc,
+  doc,
+  addDoc,
+  getDoc
+} from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import { seedProducts } from '../lib/seedData';
 import { useAuth } from '../contexts/AuthContext';
+import AdminAuth from './AdminAuth';
 
 interface Order {
   id: string;
@@ -37,6 +50,7 @@ export default function AdminPanel() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [discounts, setDiscounts] = useState<DiscountCode[]>([]);
   const [loading, setLoading] = useState(true);
+  const [seeding, setSeeding] = useState(false);
   const [showDiscountForm, setShowDiscountForm] = useState(false);
 
   const [newDiscount, setNewDiscount] = useState({
@@ -56,33 +70,67 @@ export default function AdminPanel() {
     }
   }, [isAdmin]);
 
+  const handleSeedProducts = async () => {
+    if (!confirm('Are you sure you want to seed the database with sample products? This checks if products already exist.')) return;
+
+    setSeeding(true);
+    const result = await seedProducts();
+    setSeeding(false);
+
+    alert(result.message);
+  };
+
+  const fetchProfileName = async (userId: string) => {
+    try {
+      const profileDoc = await getDoc(doc(db, 'profiles', userId));
+      if (profileDoc.exists()) {
+        const data = profileDoc.data();
+        return { name: data.name, phone: data.phone };
+      }
+      return { name: 'Unknown', phone: 'Unknown' };
+    } catch {
+      return { name: 'Unknown', phone: 'Unknown' };
+    }
+  };
+
   const loadOrders = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('orders')
-      .select(`
-        *,
-        profiles (
-          name,
-          phone
-        )
-      `)
-      .order('created_at', { ascending: false });
+    try {
+      const q = query(collection(db, 'orders'), orderBy('created_at', 'desc'));
+      const querySnapshot = await getDocs(q);
 
-    if (!error && data) {
-      setOrders(data);
+      const ordersData = await Promise.all(querySnapshot.docs.map(async (docSnap) => {
+        const data = docSnap.data();
+        // Fallback to fetching profile if name/phone not in order
+        // But assuming we want to mimic the joined structure
+        const profile = await fetchProfileName(data.user_id);
+
+        return {
+          id: docSnap.id,
+          ...data,
+          created_at: data.created_at.toDate ? data.created_at.toDate().toISOString() : data.created_at, // Handle generic vs timestamp
+          profiles: profile
+        } as Order;
+      }));
+
+      setOrders(ordersData);
+    } catch (error) {
+      console.error("Error loading orders:", error);
     }
     setLoading(false);
   };
 
   const loadDiscounts = async () => {
-    const { data, error } = await supabase
-      .from('discount_codes')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (!error && data) {
-      setDiscounts(data);
+    try {
+      const q = query(collection(db, 'discount_codes'), orderBy('created_at', 'desc'));
+      const querySnapshot = await getDocs(q);
+      const discountsData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as DiscountCode[];
+      setDiscounts(discountsData);
+    } catch (error) {
+      console.error("Error loading discounts:", error);
     }
   };
 
@@ -93,13 +141,11 @@ export default function AdminPanel() {
       updateData.payment_confirmed_at = new Date().toISOString();
     }
 
-    const { error } = await supabase
-      .from('orders')
-      .update(updateData)
-      .eq('id', orderId);
-
-    if (!error) {
+    try {
+      await updateDoc(doc(db, 'orders', orderId), updateData);
       await loadOrders();
+    } catch (error) {
+      console.error("Error updating order status:", error);
     }
   };
 
@@ -109,18 +155,20 @@ export default function AdminPanel() {
       return;
     }
 
-    const { error } = await supabase.from('discount_codes').insert({
-      code: newDiscount.code.toUpperCase(),
-      description: newDiscount.description,
-      discount_type: newDiscount.discount_type,
-      discount_value: newDiscount.discount_value,
-      min_order_amount: newDiscount.min_order_amount,
-      max_uses: newDiscount.max_uses,
-      valid_until: newDiscount.valid_until || null,
-      is_active: true,
-    });
+    try {
+      await addDoc(collection(db, 'discount_codes'), {
+        code: newDiscount.code.toUpperCase(),
+        description: newDiscount.description,
+        discount_type: newDiscount.discount_type,
+        discount_value: newDiscount.discount_value,
+        min_order_amount: newDiscount.min_order_amount,
+        max_uses: newDiscount.max_uses,
+        valid_until: newDiscount.valid_until || null,
+        is_active: true,
+        current_uses: 0,
+        created_at: new Date().toISOString()
+      });
 
-    if (!error) {
       await loadDiscounts();
       setShowDiscountForm(false);
       setNewDiscount({
@@ -132,18 +180,19 @@ export default function AdminPanel() {
         max_uses: null,
         valid_until: '',
       });
-    } else {
+    } catch (error) {
       alert('Error creating discount code');
+      console.error(error);
     }
   };
 
   const toggleDiscountStatus = async (id: string, currentStatus: boolean) => {
-    await supabase
-      .from('discount_codes')
-      .update({ is_active: !currentStatus })
-      .eq('id', id);
-
-    await loadDiscounts();
+    try {
+      await updateDoc(doc(db, 'discount_codes', id), { is_active: !currentStatus });
+      await loadDiscounts();
+    } catch (error) {
+      console.error("Error toggling discount:", error);
+    }
   };
 
   const getPendingOrders = () => orders.filter((o) => o.status === 'pending_payment');
@@ -153,20 +202,24 @@ export default function AdminPanel() {
       .reduce((sum, o) => sum + o.final_amount, 0);
 
   if (!isAdmin) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center py-12">
-          <p className="text-gray-500 dark:text-gray-400">Access denied</p>
-        </div>
-      </div>
-    );
+    return <AdminAuth />;
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-4xl font-serif font-bold text-primary dark:text-accent mb-8">
-        Admin Panel
-      </h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-serif font-bold text-primary dark:text-accent">
+          Admin Panel
+        </h1>
+        <button
+          onClick={handleSeedProducts}
+          disabled={seeding}
+          className="flex items-center space-x-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-smooth disabled:opacity-50"
+        >
+          <Database className="w-4 h-4" />
+          <span>{seeding ? 'Seeding...' : 'Seed Products'}</span>
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white dark:bg-primary-light rounded-lg p-6 shadow-md">
@@ -205,21 +258,19 @@ export default function AdminPanel() {
           <div className="flex space-x-8 px-6">
             <button
               onClick={() => setActiveTab('orders')}
-              className={`py-4 border-b-2 transition-smooth ${
-                activeTab === 'orders'
-                  ? 'border-primary dark:border-accent text-primary dark:text-accent'
-                  : 'border-transparent text-gray-600 dark:text-gray-400'
-              }`}
+              className={`py - 4 border - b - 2 transition - smooth ${activeTab === 'orders'
+                ? 'border-primary dark:border-accent text-primary dark:text-accent'
+                : 'border-transparent text-gray-600 dark:text-gray-400'
+                } `}
             >
               Orders
             </button>
             <button
               onClick={() => setActiveTab('discounts')}
-              className={`py-4 border-b-2 transition-smooth ${
-                activeTab === 'discounts'
-                  ? 'border-primary dark:border-accent text-primary dark:text-accent'
-                  : 'border-transparent text-gray-600 dark:text-gray-400'
-              }`}
+              className={`py - 4 border - b - 2 transition - smooth ${activeTab === 'discounts'
+                ? 'border-primary dark:border-accent text-primary dark:text-accent'
+                : 'border-transparent text-gray-600 dark:text-gray-400'
+                } `}
             >
               Discount Codes
             </button>
@@ -490,16 +541,15 @@ export default function AdminPanel() {
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-500">
                         Used: {discount.current_uses}
-                        {discount.max_uses ? ` / ${discount.max_uses}` : ''}
+                        {discount.max_uses ? ` / ${discount.max_uses} ` : ''}
                       </p>
                     </div>
                     <button
                       onClick={() => toggleDiscountStatus(discount.id, discount.is_active)}
-                      className={`px-4 py-2 rounded-lg transition-smooth ${
-                        discount.is_active
-                          ? 'bg-green-500 text-white hover:bg-green-600'
-                          : 'bg-gray-300 dark:bg-primary-dark text-gray-700 dark:text-gray-400 hover:bg-gray-400'
-                      }`}
+                      className={`px - 4 py - 2 rounded - lg transition - smooth ${discount.is_active
+                        ? 'bg-green-500 text-white hover:bg-green-600'
+                        : 'bg-gray-300 dark:bg-primary-dark text-gray-700 dark:text-gray-400 hover:bg-gray-400'
+                        } `}
                     >
                       {discount.is_active ? 'Active' : 'Inactive'}
                     </button>

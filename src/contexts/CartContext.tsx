@@ -1,5 +1,16 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { supabase } from '../lib/supabase';
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  getDoc
+} from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { useAuth } from './AuthContext';
 
 interface CartItem {
@@ -42,29 +53,31 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('guestCart', JSON.stringify(cart));
   };
 
+  const fetchProductDetails = async (productId: string) => {
+    const productDoc = await getDoc(doc(db, 'products', productId));
+    if (productDoc.exists()) {
+      return { id: productDoc.id, ...productDoc.data() } as any;
+    }
+    return null;
+  };
+
   const loadUserCart = async () => {
     if (!user) return [];
 
-    const { data, error } = await supabase
-      .from('cart_items')
-      .select(`
-        *,
-        product:products (
-          id,
-          name,
-          price,
-          primary_image,
-          stock_quantity
-        )
-      `)
-      .eq('user_id', user.id);
+    const q = query(collection(db, 'cart_items'), where('user_id', '==', user.uid));
+    const querySnapshot = await getDocs(q);
 
-    if (error) {
-      console.error('Error loading cart:', error);
-      return [];
-    }
+    const cartItems = await Promise.all(querySnapshot.docs.map(async (docSnap) => {
+      const data = docSnap.data();
+      const product = await fetchProductDetails(data.product_id);
+      return {
+        id: docSnap.id,
+        ...data,
+        product
+      } as CartItem;
+    }));
 
-    return data || [];
+    return cartItems;
   };
 
   const syncGuestCartToUser = async () => {
@@ -74,26 +87,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (guestCart.length === 0) return;
 
     for (const item of guestCart) {
-      const { data: existing } = await supabase
-        .from('cart_items')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('product_id', item.product_id)
-        .maybeSingle();
+      const q = query(
+        collection(db, 'cart_items'),
+        where('user_id', '==', user.uid),
+        where('product_id', '==', item.product_id)
+      );
+      const querySnapshot = await getDocs(q);
 
-      if (existing) {
-        await supabase
-          .from('cart_items')
-          .update({ quantity: existing.quantity + item.quantity })
-          .eq('id', existing.id);
+      if (!querySnapshot.empty) {
+        const existingDoc = querySnapshot.docs[0];
+        await updateDoc(doc(db, 'cart_items', existingDoc.id), {
+          quantity: existingDoc.data().quantity + item.quantity
+        });
       } else {
-        await supabase
-          .from('cart_items')
-          .insert({
-            user_id: user.id,
-            product_id: item.product_id,
-            quantity: item.quantity,
-          });
+        await addDoc(collection(db, 'cart_items'), {
+          user_id: user.uid,
+          product_id: item.product_id,
+          quantity: item.quantity,
+        });
       }
     }
 
@@ -111,12 +122,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const guestCart = loadGuestCart();
         const cartWithProducts = await Promise.all(
           guestCart.map(async (item: CartItem) => {
-            const { data: product } = await supabase
-              .from('products')
-              .select('id, name, price, primary_image, stock_quantity')
-              .eq('id', item.product_id)
-              .maybeSingle();
-
+            const product = await fetchProductDetails(item.product_id);
             return {
               ...item,
               product: product || undefined,
@@ -133,26 +139,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = async (productId: string, quantity = 1) => {
     if (user) {
-      const { data: existing } = await supabase
-        .from('cart_items')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('product_id', productId)
-        .maybeSingle();
+      const q = query(
+        collection(db, 'cart_items'),
+        where('user_id', '==', user.uid),
+        where('product_id', '==', productId)
+      );
+      const querySnapshot = await getDocs(q);
 
-      if (existing) {
-        await supabase
-          .from('cart_items')
-          .update({ quantity: existing.quantity + quantity })
-          .eq('id', existing.id);
+      if (!querySnapshot.empty) {
+        const existingDoc = querySnapshot.docs[0];
+        await updateDoc(doc(db, 'cart_items', existingDoc.id), {
+          quantity: existingDoc.data().quantity + quantity
+        });
       } else {
-        await supabase
-          .from('cart_items')
-          .insert({
-            user_id: user.id,
-            product_id: productId,
-            quantity,
-          });
+        await addDoc(collection(db, 'cart_items'), {
+          user_id: user.uid,
+          product_id: productId,
+          quantity,
+        });
       }
 
       const updatedCart = await loadUserCart();
@@ -171,12 +175,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       saveGuestCart(guestCart);
 
-      const { data: product } = await supabase
-        .from('products')
-        .select('id, name, price, primary_image, stock_quantity')
-        .eq('id', productId)
-        .maybeSingle();
-
+      const product = await fetchProductDetails(productId);
       const updatedItems = [...items];
       const itemIndex = updatedItems.findIndex((i) => i.product_id === productId);
 
@@ -201,14 +200,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
 
     if (user) {
-      await supabase
-        .from('cart_items')
-        .update({ quantity })
-        .eq('user_id', user.id)
-        .eq('product_id', productId);
+      const q = query(
+        collection(db, 'cart_items'),
+        where('user_id', '==', user.uid),
+        where('product_id', '==', productId)
+      );
+      const querySnapshot = await getDocs(q);
 
-      const updatedCart = await loadUserCart();
-      setItems(updatedCart);
+      if (!querySnapshot.empty) {
+        await updateDoc(doc(db, 'cart_items', querySnapshot.docs[0].id), { quantity });
+        const updatedCart = await loadUserCart();
+        setItems(updatedCart);
+      }
     } else {
       const guestCart = loadGuestCart();
       const itemIndex = guestCart.findIndex(
@@ -229,14 +232,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const removeFromCart = async (productId: string) => {
     if (user) {
-      await supabase
-        .from('cart_items')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('product_id', productId);
+      const q = query(
+        collection(db, 'cart_items'),
+        where('user_id', '==', user.uid),
+        where('product_id', '==', productId)
+      );
+      const querySnapshot = await getDocs(q);
 
-      const updatedCart = await loadUserCart();
-      setItems(updatedCart);
+      if (!querySnapshot.empty) {
+        await deleteDoc(doc(db, 'cart_items', querySnapshot.docs[0].id));
+        const updatedCart = await loadUserCart();
+        setItems(updatedCart);
+      }
     } else {
       const guestCart = loadGuestCart();
       const filtered = guestCart.filter(
@@ -249,7 +256,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = async () => {
     if (user) {
-      await supabase.from('cart_items').delete().eq('user_id', user.id);
+      const q = query(collection(db, 'cart_items'), where('user_id', '==', user.uid));
+      const querySnapshot = await getDocs(q);
+      const deletePromises = querySnapshot.docs.map(d => deleteDoc(doc(db, 'cart_items', d.id)));
+      await Promise.all(deletePromises);
     } else {
       localStorage.removeItem('guestCart');
     }

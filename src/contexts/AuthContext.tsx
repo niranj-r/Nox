@@ -1,6 +1,13 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import {
+  User,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut as firebaseSignOut,
+  onAuthStateChanged
+} from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../lib/firebase';
 
 interface Profile {
   id: string;
@@ -18,7 +25,6 @@ interface Profile {
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
-  session: Session | null;
   loading: boolean;
   isAdmin: boolean;
   signUp: (email: string, password: string, userData: {
@@ -36,66 +42,53 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
   const fetchProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
+    try {
+      const docRef = doc(db, 'profiles', userId);
+      const docSnap = await getDoc(docRef);
 
-    if (!error && data) {
-      setProfile(data as Profile);
+      if (docSnap.exists()) {
+        setProfile(docSnap.data() as Profile);
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error);
     }
   };
 
   const checkAdminStatus = async (userId: string) => {
-    const { data } = await supabase
-      .from('admin_users')
-      .select('id')
-      .eq('user_id', userId)
-      .maybeSingle();
-
-    setIsAdmin(!!data);
+    try {
+      const docRef = doc(db, 'admin_users', userId);
+      const docSnap = await getDoc(docRef);
+      setIsAdmin(docSnap.exists());
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+    }
   };
 
   const refreshProfile = async () => {
     if (user) {
-      await fetchProfile(user.id);
-      await checkAdminStatus(user.id);
+      await fetchProfile(user.uid);
+      await checkAdminStatus(user.uid);
     }
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-        checkAdminStatus(session.user.id);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setUser(user);
+      if (user) {
+        await fetchProfile(user.uid);
+        await checkAdminStatus(user.uid);
+      } else {
+        setProfile(null);
+        setIsAdmin(false);
       }
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      (async () => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await fetchProfile(session.user.id);
-          await checkAdminStatus(session.user.id);
-        } else {
-          setProfile(null);
-          setIsAdmin(false);
-        }
-        setLoading(false);
-      })();
-    });
-
-    return () => subscription.unsubscribe();
+    return () => unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string, userData: {
@@ -104,25 +97,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     shipping_address: Profile['shipping_address'];
   }) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-      if (error) throw error;
+      const profileData: Profile = {
+        id: user.uid,
+        name: userData.name,
+        phone: userData.phone,
+        shipping_address: userData.shipping_address,
+      };
 
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            name: userData.name,
-            phone: userData.phone,
-            shipping_address: userData.shipping_address,
-          });
-
-        if (profileError) throw profileError;
-      }
+      await setDoc(doc(db, 'profiles', user.uid), profileData);
+      setProfile(profileData);
 
       return { error: null };
     } catch (error) {
@@ -132,13 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
+      await signInWithEmailAndPassword(auth, email, password);
       return { error: null };
     } catch (error) {
       return { error: error as Error };
@@ -146,7 +126,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await firebaseSignOut(auth);
+    setProfile(null);
+    setIsAdmin(false);
   };
 
   return (
@@ -154,7 +136,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         profile,
-        session,
         loading,
         isAdmin,
         signUp,

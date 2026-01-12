@@ -11,7 +11,7 @@ interface HeaderProps {
 }
 
 export default function Header({ onShowAuth, onShowCart, onNavigate }: HeaderProps) {
-  const { user, profile, isAdmin, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const { getTotalItems } = useCart();
   const { theme, toggleTheme } = useTheme();
   const [showMenu, setShowMenu] = useState(false);
@@ -24,7 +24,7 @@ export default function Header({ onShowAuth, onShowCart, onNavigate }: HeaderPro
             onClick={() => onNavigate('home')}
             className="text-2xl font-serif font-bold text-primary dark:text-accent transition-smooth"
           >
-            LUXE
+            NOX
           </button>
 
           <nav className="hidden md:flex items-center space-x-8">
@@ -34,14 +34,12 @@ export default function Header({ onShowAuth, onShowCart, onNavigate }: HeaderPro
             >
               Collections
             </button>
-            {isAdmin && (
-              <button
-                onClick={() => onNavigate('admin')}
-                className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-accent transition-smooth"
-              >
-                Admin
-              </button>
-            )}
+            <button
+              onClick={() => onNavigate('admin')}
+              className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-accent transition-smooth"
+            >
+              Admin
+            </button>
           </nav>
 
           <div className="flex items-center space-x-4">

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { MessageCircle, Download, Package, Clock, CheckCircle, Truck } from 'lucide-react';
+import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
 
 interface Order {
   id: string;
@@ -16,7 +17,6 @@ interface Order {
   created_at: string;
   payment_confirmed_at: string | null;
   order_items: Array<{
-    id: string;
     product_id: string;
     quantity: number;
     unit_price: number;
@@ -42,23 +42,29 @@ export default function Dashboard() {
 
   const loadOrders = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('orders')
-      .select(`
-        *,
-        order_items (
-          *,
-          product:products (
-            name,
-            primary_image
-          )
-        )
-      `)
-      .eq('user_id', user?.id)
-      .order('created_at', { ascending: false });
+    if (!user) return;
 
-    if (!error && data) {
-      setOrders(data);
+    try {
+      const q = query(
+        collection(db, 'orders'),
+        where('user_id', '==', user.uid),
+        orderBy('created_at', 'desc')
+      );
+      const querySnapshot = await getDocs(q);
+
+      const ordersData = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          created_at: data.created_at.toDate ? data.created_at.toDate().toISOString() : data.created_at,
+          payment_confirmed_at: data.payment_confirmed_at ? data.payment_confirmed_at : null // Timestamp handling if needed, but string in code
+        } as Order;
+      });
+
+      setOrders(ordersData);
+    } catch (error) {
+      console.error("Error loading orders:", error);
     }
 
     setLoading(false);
@@ -236,14 +242,14 @@ Thank you for your purchase!
                     {(order.status === 'payment_confirmed' ||
                       order.status === 'shipped' ||
                       order.status === 'delivered') && (
-                      <button
-                        onClick={() => downloadFinalInvoice(order)}
-                        className="flex items-center space-x-2 px-4 py-2 bg-primary dark:bg-accent text-white dark:text-primary rounded-lg hover:bg-primary-light dark:hover:bg-accent-dark transition-smooth"
-                      >
-                        <Download className="w-4 h-4" />
-                        <span className="text-sm">Invoice</span>
-                      </button>
-                    )}
+                        <button
+                          onClick={() => downloadFinalInvoice(order)}
+                          className="flex items-center space-x-2 px-4 py-2 bg-primary dark:bg-accent text-white dark:text-primary rounded-lg hover:bg-primary-light dark:hover:bg-accent-dark transition-smooth"
+                        >
+                          <Download className="w-4 h-4" />
+                          <span className="text-sm">Invoice</span>
+                        </button>
+                      )}
 
                     <button
                       onClick={() => contactSupport(order.order_no)}
@@ -274,16 +280,16 @@ Thank you for your purchase!
 
                 <div className="border-t border-gray-200 dark:border-primary pt-4">
                   <div className="space-y-3 mb-4">
-                    {order.order_items.map((item) => (
-                      <div key={item.id} className="flex gap-3">
+                    {order.order_items && order.order_items.map((item, index) => (
+                      <div key={index} className="flex gap-3">
                         <img
-                          src={item.product.primary_image}
-                          alt={item.product.name}
+                          src={item.product?.primary_image || item.product_snapshot?.image}
+                          alt={item.product?.name || item.product_snapshot?.name}
                           className="w-12 h-12 object-cover rounded"
                         />
                         <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                            {item.product.name}
+                            {item.product?.name || item.product_snapshot?.name}
                           </p>
                           <p className="text-xs text-gray-600 dark:text-gray-400">
                             Qty: {item.quantity}
