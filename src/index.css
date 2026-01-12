@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #003631;
+  --color-accent: #FFEDA8;
+  --color-bg-light: #FAFAFA;
+  --color-bg-dark: #003631;
+  --color-text-light: #1A1A1A;
+  --color-text-dark: #FFFFFF;
+}
+
+@layer base {
+  body {
+    @apply transition-colors duration-500;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
