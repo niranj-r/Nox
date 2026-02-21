@@ -9,6 +9,7 @@ import Dashboard from './components/Dashboard';
 import AdminPanel from './components/AdminPanel';
 import AdminOrders from './components/AdminOrders';
 import UserProfile from './components/UserProfile';
+import Footer from './components/Footer';
 
 type Page = 'home' | 'checkout' | 'dashboard' | 'profile' | 'admin' | 'admin-orders';
 
@@ -74,6 +75,8 @@ function App() {
         onClose={() => setShowCart(false)}
         onCheckout={handleCheckout}
       />
+
+      <Footer onNavigate={(page) => setCurrentPage(page as Page)} />
     </div>
   );
 }
