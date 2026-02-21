@@ -6,14 +6,14 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#003631',
-          light: '#004D45',
-          dark: '#002420',
+          DEFAULT: 'rgb(var(--tw-primary) / <alpha-value>)',
+          light: 'rgb(var(--tw-primary-light) / <alpha-value>)',
+          dark: 'rgb(var(--tw-primary-dark) / <alpha-value>)',
         },
         accent: {
-          DEFAULT: '#FFEDA8',
-          light: '#FFF5CC',
-          dark: '#FFE685',
+          DEFAULT: 'rgb(var(--tw-accent) / <alpha-value>)',
+          light: 'rgb(var(--tw-accent-light) / <alpha-value>)',
+          dark: 'rgb(var(--tw-accent-dark) / <alpha-value>)',
         },
       },
       fontFamily: {

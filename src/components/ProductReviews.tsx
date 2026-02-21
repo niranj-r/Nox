@@ -114,14 +114,14 @@ export default function ProductReviews({ productId, onReviewAdded }: ProductRevi
     };
 
     return (
-        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-primary">
+        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-[#4A4A4A]">
             <h3 className="text-xl font-serif font-bold text-gray-900 dark:text-gray-100 mb-6">
                 Customer Reviews
             </h3>
 
             {/* Add Review Form */}
             {user ? (
-                <form onSubmit={handleSubmit} className="mb-8 bg-gray-50 dark:bg-primary p-6 rounded-lg">
+                <form onSubmit={handleSubmit} className="mb-8 bg-gray-50 dark:bg-[#363636] p-6 rounded-lg">
                     <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-4">Write a Review</h4>
 
                     <div className="flex items-center mb-4">
@@ -152,20 +152,20 @@ export default function ProductReviews({ productId, onReviewAdded }: ProductRevi
                             placeholder="Share your thoughts about this product..."
                             required
                             rows={3}
-                            className="w-full px-4 py-2 border border-gray-300 dark:border-primary-light rounded-lg focus:ring-2 focus:ring-primary dark:focus:ring-accent bg-white dark:bg-primary-light text-gray-900 dark:text-gray-100"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-[#4A4A4A] rounded-lg focus:ring-2 focus:ring-primary dark:focus:ring-white bg-white dark:bg-[#424242] text-gray-900 dark:text-gray-100"
                         />
                     </div>
 
                     <button
                         type="submit"
                         disabled={submitting}
-                        className="px-6 py-2 bg-primary dark:bg-accent text-white dark:text-primary rounded-lg hover:bg-primary-light dark:hover:bg-accent-dark transition-smooth disabled:opacity-50"
+                        className="px-6 py-2 bg-primary dark:bg-white text-white dark:text-[#363636] rounded-lg hover:bg-primary-light dark:hover:bg-gray-300 transition-smooth disabled:opacity-50"
                     >
                         {submitting ? 'Submitting...' : 'Post Review'}
                     </button>
                 </form>
             ) : (
-                <div className="mb-8 p-4 bg-gray-50 dark:bg-primary rounded-lg text-center">
+                <div className="mb-8 p-4 bg-gray-50 dark:bg-[#363636] rounded-lg text-center">
                     <p className="text-gray-600 dark:text-gray-400">
                         Please sign in to write a review.
                     </p>
@@ -176,7 +176,7 @@ export default function ProductReviews({ productId, onReviewAdded }: ProductRevi
             <div className="space-y-6">
                 {loading ? (
                     <div className="text-center py-8">
-                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary dark:border-accent"></div>
+                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary dark:border-white"></div>
                     </div>
                 ) : reviews.length === 0 ? (
                     <p className="text-center text-gray-500 dark:text-gray-400 py-8">
@@ -184,10 +184,10 @@ export default function ProductReviews({ productId, onReviewAdded }: ProductRevi
                     </p>
                 ) : (
                     reviews.map((review) => (
-                        <div key={review.id} className="border-b border-gray-100 dark:border-primary pb-6 last:border-0">
+                        <div key={review.id} className="border-b border-gray-100 dark:border-[#4A4A4A] pb-6 last:border-0">
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center">
-                                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-primary mr-3 flex items-center justify-center">
+                                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-[#363636] mr-3 flex items-center justify-center">
                                         <User className="w-4 h-4 text-gray-500" />
                                     </div>
                                     <div>

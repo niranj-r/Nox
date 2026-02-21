@@ -42,14 +42,14 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-primary-light rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto transition-smooth">
-          <div className="sticky top-0 bg-white dark:bg-primary-light border-b border-gray-200 dark:border-primary p-6 flex justify-between items-center z-10">
-            <h2 className="text-2xl font-serif font-bold text-primary dark:text-accent">
+        <div className="bg-white dark:bg-[#424242] rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto transition-smooth">
+          <div className="sticky top-0 bg-white dark:bg-[#424242] border-b border-gray-200 dark:border-[#4A4A4A] p-6 flex justify-between items-center z-10">
+            <h2 className="text-2xl font-serif font-bold text-primary dark:text-white">
               {product.name}
             </h2>
             <button
               onClick={onClose}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-primary transition-smooth"
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#363636] transition-smooth"
             >
               <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
             </button>
@@ -65,7 +65,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                 />
                 <button
                   onClick={() => setShowZoom(true)}
-                  className="absolute top-4 right-4 p-3 bg-white dark:bg-primary rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-smooth"
+                  className="absolute top-4 right-4 p-3 bg-white dark:bg-[#363636] rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-smooth"
                 >
                   <ZoomIn className="w-5 h-5 text-gray-700 dark:text-gray-300" />
                 </button>
@@ -83,8 +83,8 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                     key={idx}
                     onClick={() => setSelectedImage(img)}
                     className={`aspect-square rounded-lg overflow-hidden border-2 transition-smooth ${selectedImage === img
-                      ? 'border-primary dark:border-accent'
-                      : 'border-gray-200 dark:border-primary'
+                      ? 'border-primary dark:border-white'
+                      : 'border-gray-200 dark:border-[#4A4A4A]'
                       }`}
                   >
                     <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
@@ -96,7 +96,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
             <div>
               <div className="mb-6">
                 <div className="flex items-center space-x-3 mb-4">
-                  <span className="px-3 py-1 bg-gray-100 dark:bg-primary text-gray-700 dark:text-gray-300 text-sm rounded-full">
+                  <span className="px-3 py-1 bg-gray-100 dark:bg-[#363636] text-gray-700 dark:text-gray-300 text-sm rounded-full">
                     {product.collection}
                   </span>
                   {product.stock_quantity === 0 ? (
@@ -126,25 +126,25 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                 </div>
               </div>
 
-              <div className="border-t border-gray-200 dark:border-primary pt-6">
+              <div className="border-t border-gray-200 dark:border-[#4A4A4A] pt-6">
                 <div className="flex items-center justify-between mb-6">
-                  <span className="text-3xl font-bold text-primary dark:text-accent">
+                  <span className="text-3xl font-bold text-primary dark:text-white">
                     ${product.price.toFixed(2)}
                   </span>
 
                   <div className="flex items-center space-x-3">
                     <label className="text-sm text-gray-600 dark:text-gray-400">Quantity:</label>
-                    <div className="flex items-center border border-gray-300 dark:border-primary rounded-lg">
+                    <div className="flex items-center border border-gray-300 dark:border-[#4A4A4A] rounded-lg">
                       <button
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-primary transition-smooth"
+                        className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-[#363636] transition-smooth"
                       >
                         -
                       </button>
                       <span className="px-4 py-2 text-gray-900 dark:text-gray-100">{quantity}</span>
                       <button
                         onClick={() => setQuantity(Math.min(product.stock_quantity, quantity + 1))}
-                        className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-primary transition-smooth"
+                        className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-[#363636] transition-smooth"
                       >
                         +
                       </button>
@@ -155,7 +155,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                 <button
                   onClick={handleAddToCart}
                   disabled={adding || product.stock_quantity === 0}
-                  className="w-full py-4 bg-primary dark:bg-accent text-white dark:text-primary font-medium rounded-lg hover:bg-primary-light dark:hover:bg-accent-dark transition-smooth disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  className="w-full py-4 bg-primary dark:bg-white text-white dark:text-[#363636] font-medium rounded-lg hover:bg-primary-light dark:hover:bg-gray-300 transition-smooth disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                 >
                   {adding ? (
                     <span>Added to Cart!</span>

@@ -228,20 +228,20 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <button
         onClick={onBack}
-        className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-accent transition-smooth mb-8"
+        className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-white transition-smooth mb-8"
       >
         <ArrowLeft className="w-5 h-5" />
         <span>Back to Cart</span>
       </button>
 
-      <h1 className="text-4xl font-black uppercase tracking-tighter text-primary dark:text-accent mb-8">
+      <h1 className="text-4xl font-black uppercase tracking-tighter text-primary dark:text-white mb-8">
         Checkout
       </h1>
 
       <div className="flex flex-col md:flex-row gap-8 lg:gap-12 w-full">
         {/* Left Column - Order Summary & Discount */}
         <div className="w-full md:w-1/2 flex flex-col space-y-6">
-          <div className="bg-white dark:bg-primary-light rounded-lg p-6 shadow-sm border border-gray-100 dark:border-primary">
+          <div className="bg-white dark:bg-[#424242] rounded-lg p-6 shadow-sm border border-gray-100 dark:border-[#4A4A4A]">
             <h2 className="text-xl font-black uppercase tracking-tighter text-gray-900 dark:text-gray-100 mb-6">
               Order Summary
             </h2>
@@ -271,7 +271,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
               ))}
             </div>
 
-            <div className="border-t border-gray-200 dark:border-primary pt-4 space-y-3">
+            <div className="border-t border-gray-200 dark:border-[#4A4A4A] pt-4 space-y-3">
               <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
                 <span>Subtotal</span>
                 <span>${totalAmount.toFixed(2)}</span>
@@ -284,14 +284,14 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
                 </div>
               )}
 
-              <div className="flex justify-between text-xl lg:text-2xl font-black uppercase tracking-tighter text-primary dark:text-accent pt-4 border-t border-gray-200 dark:border-primary">
+              <div className="flex justify-between text-xl lg:text-2xl font-black uppercase tracking-tighter text-primary dark:text-white pt-4 border-t border-gray-200 dark:border-[#4A4A4A]">
                 <span>Total</span>
                 <span>${finalAmount.toFixed(2)}</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-primary-light rounded-lg p-6 shadow-sm border border-gray-100 dark:border-primary">
+          <div className="bg-white dark:bg-[#424242] rounded-lg p-6 shadow-sm border border-gray-100 dark:border-[#4A4A4A]">
             <h3 className="font-bold text-xs tracking-[0.1em] uppercase text-gray-900 dark:text-gray-100 mb-4">
               Discount Code
             </h3>
@@ -301,11 +301,11 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
                 value={discountCode}
                 onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
                 placeholder="Enter code"
-                className="w-full sm:flex-1 px-4 py-3 border border-gray-300 dark:border-primary rounded-lg focus:ring-2 focus:ring-primary dark:focus:ring-accent bg-gray-50 dark:bg-primary text-gray-900 dark:text-gray-100 transition-smooth text-sm outline-none"
+                className="w-full sm:flex-1 px-4 py-3 border border-gray-300 dark:border-[#4A4A4A] rounded-lg focus:ring-2 focus:ring-primary dark:focus:ring-white bg-gray-50 dark:bg-[#363636] text-gray-900 dark:text-gray-100 transition-smooth text-sm outline-none"
               />
               <button
                 onClick={handleApplyDiscount}
-                className="w-full sm:w-auto px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-primary font-bold tracking-[0.1em] uppercase text-[10px] rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-smooth"
+                className="w-full sm:w-auto px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-[#363636] font-bold tracking-[0.1em] uppercase text-[10px] rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-smooth"
               >
                 Apply
               </button>
@@ -315,7 +315,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
 
         {/* Right Column - Shipping & Payment */}
         <div className="w-full md:w-1/2 flex flex-col space-y-6">
-          <div className="bg-white dark:bg-primary-light rounded-lg p-6 shadow-sm border border-gray-100 dark:border-primary h-full md:min-h-[200px]">
+          <div className="bg-white dark:bg-[#424242] rounded-lg p-6 shadow-sm border border-gray-100 dark:border-[#4A4A4A] h-full md:min-h-[200px]">
             <h2 className="text-xl font-black uppercase tracking-tighter text-gray-900 dark:text-gray-100 mb-6">
               Shipping Information
             </h2>
@@ -338,7 +338,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
             )}
           </div>
 
-          <div className="bg-accent/10 dark:bg-accent/5 rounded-lg p-6 border border-accent/20 dark:border-accent/10">
+          <div className="bg-accent/10 dark:bg-white/5 rounded-lg p-6 border border-accent/20 dark:border-white/10">
             <h3 className="font-bold text-xs tracking-[0.1em] uppercase text-gray-900 dark:text-gray-100 mb-4">
               Payment Instructions
             </h3>
@@ -354,7 +354,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
           <button
             onClick={handleCheckout}
             disabled={loading || !user}
-            className="w-full py-4 bg-primary dark:bg-accent text-white dark:text-primary font-bold uppercase tracking-[0.2em] text-[10px] sm:text-xs rounded-lg hover:bg-primary-light dark:hover:bg-accent-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 shadow-lg shadow-primary/20 dark:shadow-accent/10 mt-auto"
+            className="w-full py-4 bg-primary dark:bg-white text-white dark:text-[#363636] font-bold uppercase tracking-[0.2em] text-[10px] sm:text-xs rounded-lg hover:bg-primary-light dark:hover:bg-gray-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 shadow-lg shadow-primary/20 dark:shadow-white/10 mt-auto"
           >
             {loading ? (
               <span>Processing...</span>

@@ -58,14 +58,14 @@ export default function UserProfile() {
 
     return (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <h1 className="text-4xl font-black uppercase tracking-tighter text-primary dark:text-accent mb-8">
+            <h1 className="text-4xl font-black uppercase tracking-tighter text-primary dark:text-white mb-8">
                 My Profile
             </h1>
 
             <div className="max-w-3xl mx-auto">
                 {/* Sidebar / Info Card */}
                 <div className="space-y-6">
-                    <div className="bg-white dark:bg-primary-light rounded-lg shadow-md p-6 relative">
+                    <div className="bg-white dark:bg-[#424242] rounded-lg shadow-md p-6 relative">
                         {/* Edit Toggle */}
                         <button
                             onClick={() => {
@@ -75,7 +75,7 @@ export default function UserProfile() {
                             className={`absolute top-4 right-4 p-2 rounded-full transition-smooth
                                 ${isEditing
                                     ? 'bg-green-100 text-green-600 hover:bg-green-200'
-                                    : 'bg-gray-100 dark:bg-primary text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-primary-dark'}`}
+                                    : 'bg-gray-100 dark:bg-[#363636] text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#282828]'}`}
                             title={isEditing ? "Save Changes" : "Edit Profile"}
                         >
                             {isEditing ? <Save className="w-4 h-4" /> : <Edit2 className="w-4 h-4" />}
@@ -92,7 +92,7 @@ export default function UserProfile() {
                         )}
 
                         <div className="flex items-center space-x-4 mb-6 pt-4">
-                            <div className="w-16 h-16 bg-primary dark:bg-accent rounded-full flex items-center justify-center text-white dark:text-primary text-2xl font-bold">
+                            <div className="w-16 h-16 bg-primary dark:bg-white rounded-full flex items-center justify-center text-white dark:text-[#363636] text-2xl font-bold">
                                 {profile.name.charAt(0).toUpperCase()}
                             </div>
                             <div className="flex-1">

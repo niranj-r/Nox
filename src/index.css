@@ -11,6 +11,15 @@
   --color-bg-dark: #003631;
   --color-text-light: #1A1A1A;
   --color-text-dark: #FFFFFF;
+
+  /* RGB mapped variables for dynamic theme switching in Tailwind */
+  --tw-primary: 0 54 49;
+  --tw-primary-light: 0 77 69;
+  --tw-primary-dark: 0 36 32;
+
+  --tw-accent: 255 237 168;
+  --tw-accent-light: 255 245 204;
+  --tw-accent-dark: 255 230 133;
 }
 
 @layer base {
@@ -30,6 +39,23 @@
 
   .dark {
     color-scheme: dark;
+    --color-bg-dark: #121212;
+
+    /* Dark Mode Theme - Dark Grey Base */
+    --tw-primary: 18 18 18;
+    /* #121212 */
+    --tw-primary-light: 28 28 28;
+    /* #1C1C1C */
+    --tw-primary-dark: 10 10 10;
+    /* #0A0A0A */
+
+    /* Dark Mode Theme - White Lettering */
+    --tw-accent: 255 255 255;
+    /* #FFFFFF */
+    --tw-accent-light: 243 244 246;
+    /* #F3F4F6 */
+    --tw-accent-dark: 229 231 235;
+    /* #E5E7EB */
   }
 
   /* Custom Scrollbar */
@@ -57,11 +83,11 @@
   }
 
   .dark ::-webkit-scrollbar-thumb {
-    background: #004D45;
+    background: rgb(var(--tw-primary-light));
   }
 
   .dark ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 237, 168, 0.5);
+    background: rgba(var(--tw-accent), 0.5);
     /* accent color with some transparency */
   }
 }

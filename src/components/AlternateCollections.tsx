@@ -85,8 +85,8 @@ export default function AlternateCollections({ products, externalSelectedIndex =
 
     if (!products || products.length === 0) {
         return (
-            <div className="h-[85vh] flex items-center justify-center bg-gray-50 dark:bg-primary transition-colors duration-500">
-                <div className="animate-pulse text-gray-500 dark:text-accent/60 tracking-[0.2em] uppercase text-xs font-bold">
+            <div className="h-[85vh] flex items-center justify-center bg-gray-50 dark:bg-[#363636] transition-colors duration-500">
+                <div className="animate-pulse text-gray-500 dark:text-white/60 tracking-[0.2em] uppercase text-xs font-bold">
                     Loading Collection...
                 </div>
             </div>
@@ -104,10 +104,10 @@ export default function AlternateCollections({ products, externalSelectedIndex =
 
     return (
         <>
-            <section className="relative w-full h-[100vh] min-h-[800px] bg-gray-50 dark:bg-primary overflow-hidden font-sans text-primary dark:text-accent flex flex-col md:flex-row border-b border-gray-200 dark:border-accent/10 transition-colors duration-500 select-none">
+            <section className="relative w-full h-[100vh] min-h-[800px] bg-gray-50 dark:bg-[#363636] overflow-hidden font-sans text-primary dark:text-white flex flex-col md:flex-row border-b border-gray-200 dark:border-white/10 transition-colors duration-500 select-none">
 
                 {/* LEFT PANEL */}
-                <div className="w-full md:w-[35%] lg:w-[30%] h-[40%] md:h-full p-8 md:p-16 flex flex-col justify-center relative z-20 border-b md:border-b-0 md:border-r border-gray-200 dark:border-accent/10 bg-gray-50 dark:bg-primary shadow-[10px_0_30px_-10px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_30px_-10px_rgba(0,0,0,0.5)] transition-colors duration-500">
+                <div className="w-full md:w-[35%] lg:w-[30%] h-[40%] md:h-full p-8 md:p-16 flex flex-col justify-center relative z-20 border-b md:border-b-0 md:border-r border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-[#363636] shadow-[10px_0_30px_-10px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_30px_-10px_rgba(0,0,0,0.5)] transition-colors duration-500">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={selectedProduct.id}
@@ -117,7 +117,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                             transition={{ duration: 0.3, ease: "easeOut" }}
                             className="flex flex-col h-full justify-center"
                         >
-                            <p className="text-[10px] md:text-xs tracking-[0.2em] font-bold text-gray-500 dark:text-accent/60 mb-2 uppercase transition-colors duration-500">
+                            <p className="text-[10px] md:text-xs tracking-[0.2em] font-bold text-gray-500 dark:text-white/60 mb-2 uppercase transition-colors duration-500">
                                 Item {(selectedIndex + 1).toString().padStart(2, '0')} / {products.length.toString().padStart(2, '0')}
                             </p>
 
@@ -126,16 +126,16 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                             </h2>
 
                             <div className="grid grid-cols-2 gap-y-6 md:gap-y-8 gap-x-4 w-full text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] mt-auto md:mt-0">
-                                <div className="text-gray-500 dark:text-accent/60 transition-colors duration-500">Status</div>
+                                <div className="text-gray-500 dark:text-white/60 transition-colors duration-500">Status</div>
                                 <div className="text-gray-900 dark:text-white transition-colors duration-500">{selectedProduct.stock_quantity > 0 ? 'Available' : 'Archive'}</div>
 
-                                <div className="text-gray-500 dark:text-accent/60 transition-colors duration-500">Color</div>
+                                <div className="text-gray-500 dark:text-white/60 transition-colors duration-500">Color</div>
                                 <div className="text-gray-900 dark:text-white transition-colors duration-500">{selectedProduct.color || 'Onyx'}</div>
 
-                                <div className="text-gray-500 dark:text-accent/60 transition-colors duration-500">Material</div>
+                                <div className="text-gray-500 dark:text-white/60 transition-colors duration-500">Material</div>
                                 <div className="text-gray-900 dark:text-white transition-colors duration-500">{selectedProduct.material || 'Sterling'}</div>
 
-                                <div className="text-gray-500 dark:text-accent/60 transition-colors duration-500">Value</div>
+                                <div className="text-gray-500 dark:text-white/60 transition-colors duration-500">Value</div>
                                 <div className="text-gray-900 dark:text-white transition-colors duration-500">${selectedProduct.price?.toFixed(2)}</div>
                             </div>
 
@@ -146,7 +146,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                                     ? 'bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed'
                                     : addingToCart === selectedProduct.id
                                         ? 'bg-green-600 text-white shadow-lg shadow-green-600/20'
-                                        : 'bg-primary dark:bg-accent text-white dark:text-primary hover:bg-primary-light dark:hover:bg-accent-light shadow-xl shadow-primary/20 dark:shadow-accent/10 hover:-translate-y-1'
+                                        : 'bg-primary dark:bg-white text-white dark:text-[#363636] hover:bg-primary-light dark:hover:bg-gray-100 shadow-xl shadow-primary/20 dark:shadow-white/10 hover:-translate-y-1'
                                     }`}
                             >
                                 {addingToCart === selectedProduct.id ? (
@@ -216,7 +216,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -30 }}
                         transition={{ duration: 0.6, ease: "easeOut" }}
-                        className="w-full bg-white dark:bg-[#0a0a0a] transition-colors duration-500 py-24 border-b border-gray-200 dark:border-accent/10"
+                        className="w-full bg-white dark:bg-[#1A1A1A] transition-colors duration-500 py-24 border-b border-gray-200 dark:border-white/10"
                     >
                         <div className="container mx-auto px-8 md:px-16">
                             <motion.div
@@ -229,7 +229,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                                 <h3 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tighter text-primary dark:text-white mb-4 text-left transition-colors duration-500">
                                     Finer Details
                                 </h3>
-                                <p className="text-gray-500 dark:text-accent/60 tracking-[0.2em] font-bold uppercase text-xs text-left transition-colors duration-500">
+                                <p className="text-gray-500 dark:text-white/60 tracking-[0.2em] font-bold uppercase text-xs text-left transition-colors duration-500">
                                     {selectedProduct.name}
                                 </p>
                             </motion.div>
@@ -242,7 +242,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true, margin: "-100px" }}
                                         transition={{ duration: 0.7, delay: idx * 0.15, ease: "easeOut" }}
-                                        className="group relative aspect-[4/5] overflow-hidden bg-gray-100 dark:bg-primary/50 shadow-sm"
+                                        className="group relative aspect-[4/5] overflow-hidden bg-gray-100 dark:bg-[#363636]/50 shadow-sm"
                                     >
                                         <img
                                             src={image}

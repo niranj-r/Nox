@@ -32,8 +32,8 @@ export default function AlternateHero({ products, onProductClick, onShowAuth, on
 
     if (!products || products.length === 0) {
         return (
-            <div className="h-[60vh] flex items-center justify-center bg-gray-50 dark:bg-primary transition-colors duration-500">
-                <div className="animate-pulse text-gray-500 dark:text-accent/60 tracking-[0.2em] uppercase text-xs font-bold">
+            <div className="h-[60vh] flex items-center justify-center bg-gray-50 dark:bg-[#363636] transition-colors duration-500">
+                <div className="animate-pulse text-gray-500 dark:text-white/60 tracking-[0.2em] uppercase text-xs font-bold">
                     Loading...
                 </div>
             </div>
@@ -41,7 +41,7 @@ export default function AlternateHero({ products, onProductClick, onShowAuth, on
     }
 
     return (
-        <section className="w-full bg-[#F6F6F6] dark:bg-primary overflow-hidden font-sans text-[#111] dark:text-white transition-colors duration-500 select-none pb-12 pt-8">
+        <section className="w-full bg-[#F6F6F6] dark:bg-[#363636] overflow-hidden font-sans text-[#111] dark:text-white transition-colors duration-500 select-none pb-12 pt-8">
 
             {/* Header Layout Similar to BECANE Reference */}
             <div className="max-w-[1400px] mx-auto px-6 lg:px-12 flex justify-between items-start mb-16">
@@ -49,38 +49,38 @@ export default function AlternateHero({ products, onProductClick, onShowAuth, on
                     <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
                         NOX
                     </h2>
-                    <div className="flex gap-4 text-[10px] font-bold tracking-[0.15em] text-black/40 dark:text-accent/40 uppercase">
-                        <span className="text-black dark:text-accent">ALL <span className="opacity-40">{products.length.toString().padStart(2, '0')}</span></span>
+                    <div className="flex gap-4 text-[10px] font-bold tracking-[0.15em] text-black/40 dark:text-white/40 uppercase">
+                        <span className="text-black dark:text-white">ALL <span className="opacity-40">{products.length.toString().padStart(2, '0')}</span></span>
                         <span>STORIES <span className="opacity-40">04</span></span>
                     </div>
                 </div>
 
                 <div className="flex flex-col items-end gap-4 mt-2 relative z-50">
                     {/* Header Controls */}
-                    <div className="flex items-center gap-6 text-[10px] font-bold tracking-[0.15em] uppercase text-black/60 dark:text-accent/60">
-                        <span onClick={() => onNavigate?.('home')} className="cursor-pointer hover:text-black dark:hover:text-accent transition-colors">Collections</span>
+                    <div className="flex items-center gap-6 text-[10px] font-bold tracking-[0.15em] uppercase text-black/60 dark:text-white/60">
+                        <span onClick={() => onNavigate?.('home')} className="cursor-pointer hover:text-black dark:hover:text-white transition-colors">Collections</span>
 
 
-                        <button onClick={toggleTheme} className="hover:text-black dark:hover:text-accent transition-colors">
+                        <button onClick={toggleTheme} className="hover:text-black dark:hover:text-white transition-colors">
                             {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
                         </button>
 
                         {user && profile ? (
                             <div className="relative">
-                                <button onClick={() => setShowMenu(!showMenu)} className="flex items-center gap-2 hover:text-black dark:hover:text-accent transition-colors">
+                                <button onClick={() => setShowMenu(!showMenu)} className="flex items-center gap-2 hover:text-black dark:hover:text-white transition-colors">
                                     <User className="w-4 h-4" />
                                     <span>{profile.name}</span>
                                 </button>
                                 {showMenu && (
-                                    <div className="absolute right-0 mt-4 w-48 bg-white dark:bg-primary-light border border-black/5 dark:border-accent/10 shadow-lg py-4 flex flex-col items-start px-4 gap-4 z-50">
-                                        <button onClick={() => { onNavigate?.('dashboard'); setShowMenu(false); }} className="w-full text-left hover:text-black dark:hover:text-accent transition-colors uppercase tracking-[0.15em] text-[10px] font-bold">My Orders</button>
-                                        <button onClick={() => { onNavigate?.('profile'); setShowMenu(false); }} className="w-full text-left hover:text-black dark:hover:text-accent transition-colors uppercase tracking-[0.15em] text-[10px] font-bold">Profile</button>
+                                    <div className="absolute right-0 mt-4 w-48 bg-white dark:bg-[#424242] border border-black/5 dark:border-white/10 shadow-lg py-4 flex flex-col items-start px-4 gap-4 z-50">
+                                        <button onClick={() => { onNavigate?.('dashboard'); setShowMenu(false); }} className="w-full text-left hover:text-black dark:hover:text-white transition-colors uppercase tracking-[0.15em] text-[10px] font-bold">My Orders</button>
+                                        <button onClick={() => { onNavigate?.('profile'); setShowMenu(false); }} className="w-full text-left hover:text-black dark:hover:text-white transition-colors uppercase tracking-[0.15em] text-[10px] font-bold">Profile</button>
                                         <button onClick={async () => { await signOut(); setShowMenu(false); }} className="w-full text-left text-red-500 hover:text-red-700 transition-colors uppercase tracking-[0.15em] text-[10px] font-bold">Sign Out</button>
                                     </div>
                                 )}
                             </div>
                         ) : (
-                            <button onClick={() => onShowAuth?.('login')} className="hover:text-black dark:hover:text-accent transition-colors">
+                            <button onClick={() => onShowAuth?.('login')} className="hover:text-black dark:hover:text-white transition-colors">
                                 Sign In
                             </button>
                         )}
@@ -88,13 +88,13 @@ export default function AlternateHero({ products, onProductClick, onShowAuth, on
 
                     {/* Collection and Cart Context */}
                     <div className="flex items-center gap-6">
-                        <div className="hidden md:flex items-center gap-4 bg-white dark:bg-primary-dark px-4 py-2 border border-black/5 dark:border-accent/10 shadow-sm text-[10px] font-bold tracking-[0.15em] uppercase text-black/60 dark:text-accent/60">
+                        <div className="hidden md:flex items-center gap-4 bg-white dark:bg-[#282828] px-4 py-2 border border-black/5 dark:border-white/10 shadow-sm text-[10px] font-bold tracking-[0.15em] uppercase text-black/60 dark:text-white/60">
                             <span>Collection</span>
                             <span>01 / 01</span>
                         </div>
                         <div
                             onClick={() => onShowCart?.()}
-                            className="flex items-center gap-2 text-[10px] font-bold tracking-[0.15em] uppercase text-black/60 dark:text-accent/60 cursor-pointer hover:text-black dark:hover:text-accent transition-colors">
+                            className="flex items-center gap-2 text-[10px] font-bold tracking-[0.15em] uppercase text-black/60 dark:text-white/60 cursor-pointer hover:text-black dark:hover:text-white transition-colors">
                             <span>Cart</span>
                             <span>{getTotalItems().toString().padStart(2, '0')}</span>
                         </div>
@@ -105,7 +105,7 @@ export default function AlternateHero({ products, onProductClick, onShowAuth, on
             {/* Collection Title section */}
             <div className="max-w-[1400px] mx-auto px-6 lg:px-12 mb-20 flex justify-between items-end">
                 <div className="flex flex-col gap-2">
-                    <span className="text-[10px] md:text-xs tracking-[0.2em] font-bold text-black/40 dark:text-accent/40 uppercase">
+                    <span className="text-[10px] md:text-xs tracking-[0.2em] font-bold text-black/40 dark:text-white/40 uppercase">
                         COLLECTION 01 / 01
                     </span>
                     <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-black uppercase tracking-tighter leading-none">
@@ -114,7 +114,7 @@ export default function AlternateHero({ products, onProductClick, onShowAuth, on
                 </div>
 
                 <div className="hidden md:flex gap-12 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">
-                    <span className="text-black/40 dark:text-accent/40">PRODUCTS</span>
+                    <span className="text-black/40 dark:text-white/40">PRODUCTS</span>
                     <span>{products.length}</span>
                 </div>
             </div>
@@ -165,9 +165,9 @@ export default function AlternateHero({ products, onProductClick, onShowAuth, on
             </div>
 
             {/* Footer Discover section */}
-            <div className="max-w-[1400px] mx-auto px-6 lg:px-12 flex justify-between items-center text-[10px] font-bold tracking-[0.15em] uppercase text-black/40 dark:text-accent/40 bg-white/50 dark:bg-primary-dark/80 p-4 border border-black/5 dark:border-accent/10">
+            <div className="max-w-[1400px] mx-auto px-6 lg:px-12 flex justify-between items-center text-[10px] font-bold tracking-[0.15em] uppercase text-black/40 dark:text-white/40 bg-white/50 dark:bg-[#282828]/80 p-4 border border-black/5 dark:border-white/10">
                 <span>{products.length} Products</span>
-                <span className="cursor-pointer hover:text-black dark:hover:text-accent transition-colors">DISCOVER</span>
+                <span className="cursor-pointer hover:text-black dark:hover:text-white transition-colors">DISCOVER</span>
             </div>
 
         </section>

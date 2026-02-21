@@ -21,14 +21,14 @@ export default function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebar
         onClick={onClose}
       />
 
-      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-primary shadow-2xl z-50 flex flex-col transition-smooth">
-        <div className="p-6 border-b border-gray-200 dark:border-primary-light flex justify-between items-center">
-          <h2 className="text-2xl font-black uppercase tracking-tighter text-primary dark:text-accent">
+      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-[#363636] shadow-2xl z-50 flex flex-col transition-smooth">
+        <div className="p-6 border-b border-gray-200 dark:border-[#4A4A4A] flex justify-between items-center">
+          <h2 className="text-2xl font-black uppercase tracking-tighter text-primary dark:text-white">
             Shopping Cart
           </h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-primary-light transition-smooth"
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#424242] transition-smooth"
           >
             <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
           </button>
@@ -44,7 +44,7 @@ export default function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebar
               {items.map((item) => (
                 <div
                   key={item.product_id}
-                  className="flex gap-4 p-4 bg-gray-50 dark:bg-primary-light rounded-lg"
+                  className="flex gap-4 p-4 bg-gray-50 dark:bg-[#424242] rounded-lg"
                 >
                   <img
                     src={item.product?.primary_image}
@@ -56,22 +56,22 @@ export default function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebar
                     <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
                       {item.product?.name}
                     </h3>
-                    <p className="text-sm text-primary dark:text-accent font-bold mb-2">
+                    <p className="text-sm text-primary dark:text-white font-bold mb-2">
                       ${item.product?.price.toFixed(2)}
                     </p>
 
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center border border-gray-300 dark:border-primary rounded">
+                      <div className="flex items-center border border-gray-300 dark:border-[#4A4A4A] rounded">
                         <button
                           onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
-                          className="px-2 py-1 hover:bg-gray-100 dark:hover:bg-primary transition-smooth text-gray-700 dark:text-gray-300"
+                          className="px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#363636] transition-smooth text-gray-700 dark:text-gray-300"
                         >
                           -
                         </button>
                         <span className="px-3 py-1 text-gray-900 dark:text-gray-100">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
-                          className="px-2 py-1 hover:bg-gray-100 dark:hover:bg-primary transition-smooth text-gray-700 dark:text-gray-300"
+                          className="px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#363636] transition-smooth text-gray-700 dark:text-gray-300"
                         >
                           +
                         </button>
@@ -92,17 +92,17 @@ export default function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebar
         </div>
 
         {items.length > 0 && (
-          <div className="p-6 border-t border-gray-200 dark:border-primary-light">
+          <div className="p-6 border-t border-gray-200 dark:border-[#4A4A4A]">
             <div className="flex justify-between items-center mb-4">
               <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-700 dark:text-gray-300">Total</span>
-              <span className="text-2xl font-black uppercase tracking-tighter text-primary dark:text-accent">
+              <span className="text-2xl font-black uppercase tracking-tighter text-primary dark:text-white">
                 ${getTotalPrice().toFixed(2)}
               </span>
             </div>
 
             <button
               onClick={onCheckout}
-              className="w-full py-4 bg-primary dark:bg-accent text-white dark:text-primary font-bold tracking-[0.2em] uppercase text-[10px] rounded-lg hover:bg-primary-light dark:hover:bg-accent-dark transition-smooth flex items-center justify-center space-x-2"
+              className="w-full py-4 bg-primary dark:bg-white text-white dark:text-[#363636] font-bold tracking-[0.2em] uppercase text-[10px] rounded-lg hover:bg-primary-light dark:hover:bg-gray-300 transition-smooth flex items-center justify-center space-x-2"
             >
               <MessageCircle className="w-5 h-5" />
               <span>Checkout via WhatsApp</span>

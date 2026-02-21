@@ -203,7 +203,7 @@ Thank you for your purchase!
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary dark:border-accent"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary dark:border-white"></div>
         </div>
       </div>
     );
@@ -212,12 +212,12 @@ Thank you for your purchase!
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-4xl font-black uppercase tracking-tighter text-primary dark:text-accent">
+        <h1 className="text-4xl font-black uppercase tracking-tighter text-primary dark:text-white">
           My Orders
         </h1>
         <button
           onClick={() => onNavigate?.('home')}
-          className="px-4 py-2 bg-gray-200 dark:bg-primary text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-primary-dark transition-smooth"
+          className="px-4 py-2 bg-gray-200 dark:bg-[#363636] text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-[#282828] transition-smooth"
         >
           Back to Home
         </button>
@@ -233,7 +233,7 @@ Thank you for your purchase!
           {orders.map((order) => (
             <div
               key={order.id}
-              className="bg-white dark:bg-primary-light rounded-lg shadow-md overflow-hidden"
+              className="bg-white dark:bg-[#424242] rounded-lg shadow-md overflow-hidden"
             >
               <div className="p-6">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -256,7 +256,7 @@ Thank you for your purchase!
                     {order.status === 'pending_payment' && (
                       <button
                         onClick={() => downloadProformaInvoice(order)}
-                        className="flex items-center space-x-2 px-4 py-2 bg-gray-200 dark:bg-primary text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-primary-dark transition-smooth"
+                        className="flex items-center space-x-2 px-4 py-2 bg-gray-200 dark:bg-[#363636] text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-[#282828] transition-smooth"
                       >
                         <Download className="w-4 h-4" />
                         <span className="text-[10px] font-bold tracking-[0.1em] uppercase">Proforma</span>
@@ -268,7 +268,7 @@ Thank you for your purchase!
                       order.status === 'delivered') && (
                         <button
                           onClick={() => downloadFinalInvoice(order)}
-                          className="flex items-center space-x-2 px-4 py-2 bg-primary dark:bg-accent text-white dark:text-primary rounded-lg hover:bg-primary-light dark:hover:bg-accent-dark transition-smooth"
+                          className="flex items-center space-x-2 px-4 py-2 bg-primary dark:bg-white text-white dark:text-[#363636] rounded-lg hover:bg-primary-light dark:hover:bg-gray-300 transition-smooth"
                         >
                           <Download className="w-4 h-4" />
                           <span className="text-[10px] font-bold tracking-[0.1em] uppercase">Invoice</span>
@@ -277,7 +277,7 @@ Thank you for your purchase!
 
                     <button
                       onClick={() => contactSupport(order.order_no)}
-                      className="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-primary text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-primary transition-smooth"
+                      className="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-[#4A4A4A] text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-[#363636] transition-smooth"
                     >
                       <MessageCircle className="w-4 h-4" />
                       <span className="text-[10px] font-bold tracking-[0.1em] uppercase">Help</span>
@@ -293,16 +293,16 @@ Thank you for your purchase!
                         {getProgressPercentage(order.status)}%
                       </div>
                     </div>
-                    <div className="overflow-hidden h-2 text-xs flex rounded-full bg-gray-200 dark:bg-primary">
+                    <div className="overflow-hidden h-2 text-xs flex rounded-full bg-gray-200 dark:bg-[#363636]">
                       <div
                         style={{ width: `${getProgressPercentage(order.status)}%` }}
-                        className="transition-smooth shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary dark:bg-accent"
+                        className="transition-smooth shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary dark:bg-white"
                       ></div>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-gray-200 dark:border-primary pt-4">
+                <div className="border-t border-gray-200 dark:border-[#4A4A4A] pt-4">
                   <div className="space-y-3 mb-4">
                     {order.order_items && order.order_items.map((item, index) => (
                       <div key={index} className="flex gap-3">
@@ -326,9 +326,9 @@ Thank you for your purchase!
                     ))}
                   </div>
 
-                  <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-primary">
+                  <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-[#4A4A4A]">
                     <span className="font-medium text-gray-900 dark:text-gray-100">Total</span>
-                    <span className="text-xl font-bold text-primary dark:text-accent">
+                    <span className="text-xl font-bold text-primary dark:text-white">
                       ${order.final_amount.toFixed(2)}
                     </span>
                   </div>

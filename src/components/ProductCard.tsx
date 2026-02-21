@@ -61,12 +61,12 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="group bg-white dark:bg-primary-light rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+      className="group bg-white dark:bg-[#424242] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-primary">
+      <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-[#363636]">
         <motion.img
           src={isHovered && product.hover_image ? product.hover_image : product.primary_image}
           alt={product.name}
@@ -93,7 +93,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
         <div className={`absolute bottom-3 left-3 pointer-events-none ${isHovered ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
           <button
             onClick={() => onQuickView(product)}
-            className="pointer-events-auto p-2.5 bg-white/95 dark:bg-primary/95 backdrop-blur-sm text-gray-900 dark:text-gray-100 rounded-full shadow-lg hover:bg-white dark:hover:bg-primary transition-all duration-300 hover:scale-110"
+            className="pointer-events-auto p-2.5 bg-white/95 dark:bg-[#363636]/95 backdrop-blur-sm text-gray-900 dark:text-gray-100 rounded-full shadow-lg hover:bg-white dark:hover:bg-[#363636] transition-all duration-300 hover:scale-110"
             aria-label="Quick View"
           >
             <Eye className="w-4 h-4" />
@@ -104,7 +104,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
       {/* Details Container */}
       <div className="p-5">
         <div className="cursor-pointer" onClick={() => onQuickView(product)}>
-          <h3 className="text-xl font-serif font-bold text-gray-900 dark:text-gray-100 mb-1 leading-tight group-hover:text-primary dark:group-hover:text-accent transition-colors">
+          <h3 className="text-xl font-serif font-bold text-gray-900 dark:text-gray-100 mb-1 leading-tight group-hover:text-primary dark:group-hover:text-white transition-colors">
             {product.name}
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
@@ -134,7 +134,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
           <div className="h-10">
             {quantityInCart > 0 ? (
               // Quantity Selector
-              <div onClick={(e) => e.stopPropagation()} className="flex items-center bg-gray-900 dark:bg-accent text-white dark:text-primary rounded-lg h-full px-1 shadow-md">
+              <div onClick={(e) => e.stopPropagation()} className="flex items-center bg-gray-900 dark:bg-white text-white dark:text-[#363636] rounded-lg h-full px-1 shadow-md">
                 <button
                   onClick={(e) => handleUpdateQuantity(e, quantityInCart - 1)}
                   className="w-8 h-full flex items-center justify-center hover:bg-white/10 rounded transition-colors"
@@ -159,8 +159,8 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
                 disabled={addingToCart || product.stock_quantity === 0}
                 className={`h-10 w-10 flex items-center justify-center rounded-lg transition-all duration-200 
                   ${product.stock_quantity === 0
-                    ? 'bg-gray-100 dark:bg-primary text-gray-400 cursor-not-allowed'
-                    : 'bg-gray-900 dark:bg-accent text-white dark:text-primary hover:bg-primary dark:hover:bg-accent-dark hover:scale-105 shadow-sm'}`}
+                    ? 'bg-gray-100 dark:bg-[#363636] text-gray-400 cursor-not-allowed'
+                    : 'bg-gray-900 dark:bg-white text-white dark:text-[#363636] hover:bg-primary dark:hover:bg-gray-300 hover:scale-105 shadow-sm'}`}
                 aria-label="Add to cart"
               >
                 {addingToCart ? (
