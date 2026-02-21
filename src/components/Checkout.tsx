@@ -238,71 +238,74 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
         Checkout
       </h1>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        <div>
-          <div className="bg-white dark:bg-primary-light rounded-lg p-6 mb-6">
-            <h2 className="text-xl font-black uppercase tracking-tighter text-gray-900 dark:text-gray-100 mb-4">
+      <div className="flex flex-col md:flex-row gap-8 lg:gap-12 w-full">
+        {/* Left Column - Order Summary & Discount */}
+        <div className="w-full md:w-1/2 flex flex-col space-y-6">
+          <div className="bg-white dark:bg-primary-light rounded-lg p-6 shadow-sm border border-gray-100 dark:border-primary">
+            <h2 className="text-xl font-black uppercase tracking-tighter text-gray-900 dark:text-gray-100 mb-6">
               Order Summary
             </h2>
 
-            <div className="space-y-4 mb-4">
+            <div className="space-y-4 mb-6">
               {items.map((item) => (
                 <div key={item.product_id} className="flex gap-4">
                   <img
                     src={item.product?.primary_image}
                     alt={item.product?.name}
-                    className="w-16 h-16 object-cover rounded"
+                    className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded"
                   />
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900 dark:text-gray-100">
+                  <div className="flex-[2] flex flex-col justify-center">
+                    <p className="font-bold text-gray-900 dark:text-gray-100 leading-tight">
                       {item.product?.name}
                     </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
                       Qty: {item.quantity} × ${item.product?.price.toFixed(2)}
                     </p>
                   </div>
-                  <p className="font-medium text-gray-900 dark:text-gray-100">
-                    ${((item.product?.price || 0) * item.quantity).toFixed(2)}
-                  </p>
+                  <div className="flex-1 flex items-center justify-end">
+                    <p className="font-bold text-gray-900 dark:text-gray-100">
+                      ${((item.product?.price || 0) * item.quantity).toFixed(2)}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
 
-            <div className="border-t border-gray-200 dark:border-primary pt-4 space-y-2">
-              <div className="flex justify-between text-gray-600 dark:text-gray-400">
+            <div className="border-t border-gray-200 dark:border-primary pt-4 space-y-3">
+              <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
                 <span>Subtotal</span>
                 <span>${totalAmount.toFixed(2)}</span>
               </div>
 
               {discount && (
-                <div className="flex justify-between text-green-600 dark:text-green-400">
+                <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
                   <span>Discount ({discount.code})</span>
                   <span>-${discountAmount.toFixed(2)}</span>
                 </div>
               )}
 
-              <div className="flex justify-between text-xl font-bold text-primary dark:text-accent pt-2 border-t border-gray-200 dark:border-primary">
+              <div className="flex justify-between text-xl lg:text-2xl font-black uppercase tracking-tighter text-primary dark:text-accent pt-4 border-t border-gray-200 dark:border-primary">
                 <span>Total</span>
                 <span>${finalAmount.toFixed(2)}</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-primary-light rounded-lg p-6">
-            <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-4">
+          <div className="bg-white dark:bg-primary-light rounded-lg p-6 shadow-sm border border-gray-100 dark:border-primary">
+            <h3 className="font-bold text-xs tracking-[0.1em] uppercase text-gray-900 dark:text-gray-100 mb-4">
               Discount Code
             </h3>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 value={discountCode}
                 onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
                 placeholder="Enter code"
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-primary rounded-lg focus:ring-2 focus:ring-primary dark:focus:ring-accent bg-white dark:bg-primary text-gray-900 dark:text-gray-100 transition-smooth"
+                className="w-full sm:flex-1 px-4 py-3 border border-gray-300 dark:border-primary rounded-lg focus:ring-2 focus:ring-primary dark:focus:ring-accent bg-gray-50 dark:bg-primary text-gray-900 dark:text-gray-100 transition-smooth text-sm outline-none"
               />
               <button
                 onClick={handleApplyDiscount}
-                className="px-6 py-2 bg-gray-200 dark:bg-primary text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-primary-dark transition-smooth"
+                className="w-full sm:w-auto px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-primary font-bold tracking-[0.1em] uppercase text-[10px] rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-smooth"
               >
                 Apply
               </button>
@@ -310,17 +313,18 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
           </div>
         </div>
 
-        <div>
-          <div className="bg-white dark:bg-primary-light rounded-lg p-6 mb-6">
-            <h2 className="text-xl font-black uppercase tracking-tighter text-gray-900 dark:text-gray-100 mb-4">
+        {/* Right Column - Shipping & Payment */}
+        <div className="w-full md:w-1/2 flex flex-col space-y-6">
+          <div className="bg-white dark:bg-primary-light rounded-lg p-6 shadow-sm border border-gray-100 dark:border-primary h-full md:min-h-[200px]">
+            <h2 className="text-xl font-black uppercase tracking-tighter text-gray-900 dark:text-gray-100 mb-6">
               Shipping Information
             </h2>
 
             {profile ? (
-              <div className="space-y-2 text-gray-600 dark:text-gray-400">
-                <p className="font-medium text-gray-900 dark:text-gray-100">{profile.name}</p>
+              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                <p className="font-bold text-gray-900 dark:text-gray-100 text-base">{profile.name}</p>
                 <p>{profile.phone}</p>
-                <p>{profile.shipping_address.street}</p>
+                <p className="mt-2">{profile.shipping_address.street}</p>
                 <p>
                   {profile.shipping_address.city}, {profile.shipping_address.state}{' '}
                   {profile.shipping_address.zip}
@@ -328,33 +332,35 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
                 <p>{profile.shipping_address.country}</p>
               </div>
             ) : (
-              <p className="text-gray-500 dark:text-gray-400">Please sign in to continue</p>
+              <div className="h-full flex items-center justify-center text-gray-500 dark:text-gray-400 text-sm">
+                Please sign in to continue
+              </div>
             )}
           </div>
 
-          <div className="bg-accent/10 dark:bg-accent/5 rounded-lg p-6 mb-6">
-            <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+          <div className="bg-accent/10 dark:bg-accent/5 rounded-lg p-6 border border-accent/20 dark:border-accent/10">
+            <h3 className="font-bold text-xs tracking-[0.1em] uppercase text-gray-900 dark:text-gray-100 mb-4">
               Payment Instructions
             </h3>
-            <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600 dark:text-gray-400">
+            <ol className="list-decimal list-inside space-y-3 text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
               <li>Click the button below to open WhatsApp</li>
               <li>Send the pre-filled message with your order details</li>
               <li>Share your payment screenshot via WhatsApp</li>
               <li>Wait for admin confirmation</li>
-              <li>Download your invoice once payment is confirmed</li>
+              <li>Download your invoice once confirmation is received</li>
             </ol>
           </div>
 
           <button
             onClick={handleCheckout}
             disabled={loading || !user}
-            className="w-full py-4 bg-primary dark:bg-accent text-white dark:text-primary font-bold uppercase tracking-[0.2em] text-[10px] rounded-lg hover:bg-primary-light dark:hover:bg-accent-dark transition-smooth disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            className="w-full py-4 bg-primary dark:bg-accent text-white dark:text-primary font-bold uppercase tracking-[0.2em] text-[10px] sm:text-xs rounded-lg hover:bg-primary-light dark:hover:bg-accent-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 shadow-lg shadow-primary/20 dark:shadow-accent/10 mt-auto"
           >
             {loading ? (
               <span>Processing...</span>
             ) : (
               <>
-                <MessageCircle className="w-5 h-5" />
+                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Pay via WhatsApp</span>
               </>
             )}
