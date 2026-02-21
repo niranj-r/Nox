@@ -24,7 +24,7 @@ export default function Footer({ onNavigate }: FooterProps) {
   ];
 
   return (
-    <footer className="bg-gray-100 dark:bg-[#1A1A1A] border-t border-gray-200 dark:border-[#4A4A4A] transition-smooth">
+    <footer className="relative z-10 bg-gray-100 dark:bg-[#1A1A1A] border-t border-gray-200 dark:border-[#4A4A4A] transition-smooth">
       {/* top section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex flex-col md:flex-row justify-between">

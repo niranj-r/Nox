@@ -107,7 +107,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
             <section className="relative w-full h-[100vh] min-h-[800px] bg-gray-50 dark:bg-[#121212] overflow-hidden font-sans text-primary dark:text-white flex flex-col md:flex-row border-b border-gray-200 dark:border-white/10 transition-colors duration-500 select-none">
 
                 {/* LEFT PANEL */}
-                <div className="w-full md:w-[35%] lg:w-[30%] h-[40%] md:h-full p-8 md:p-16 flex flex-col justify-center relative z-20 border-b md:border-b-0 md:border-r border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-[#121212] shadow-[10px_0_30px_-10px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_30px_-10px_rgba(0,0,0,0.5)] transition-colors duration-500">
+                <div className="w-full md:w-[35%] lg:w-[30%] h-[40%] md:h-full py-8 px-6 lg:px-20 lg:py-16 flex flex-col justify-center relative z-20 border-b md:border-b-0 md:border-r border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-[#121212] shadow-[10px_0_30px_-10px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_30px_-10px_rgba(0,0,0,0.5)] transition-colors duration-500">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={selectedProduct.id}

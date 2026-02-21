@@ -75,7 +75,7 @@ export default function UserProfile() {
 
     if (!user || !profile) {
         return (
-            <div className="flex items-center justify-center min-h-[70vh] bg-gray-50 dark:bg-primary transition-colors duration-500">
+            <div className="flex items-center justify-center min-h-[70vh] bg-gray-50 dark:bg-[#121212] transition-colors duration-500">
                 <div className="animate-pulse text-gray-500 dark:text-accent/60 tracking-[0.2em] uppercase text-xs font-bold">
                     Identifying User...
                 </div>
@@ -83,10 +83,10 @@ export default function UserProfile() {
         );
     }
 
-    const inputClasses = "w-full bg-transparent border-b-2 border-gray-200 dark:border-accent/20 pb-2 text-primary dark:text-white font-bold focus:outline-none focus:border-primary dark:focus:border-accent transition-colors duration-300 placeholder-gray-400 dark:placeholder-gray-600";
+    const inputClasses = "w-full bg-transparent border-b-2 border-gray-200 dark:border-accent/20 pb-2 text-[#111] dark:text-white font-bold focus:outline-none dark:focus:border-[#222] dark:focus:border-accent transition-colors duration-300 placeholder-gray-400 dark:placeholder-gray-600";
 
     return (
-        <section className="min-h-screen bg-gray-50 dark:bg-primary pt-24 pb-12 px-4 sm:px-6 lg:px-8 transition-colors duration-500 font-sans">
+        <section className="min-h-screen bg-gray-50 dark:bg-[#121212] pt-24 pb-12 px-4 sm:px-6 lg:px-8 transition-colors duration-500 font-sans">
             <div className="max-w-5xl mx-auto">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -95,7 +95,7 @@ export default function UserProfile() {
                     className="flex flex-col md:flex-row items-start md:items-end justify-between mb-12 md:mb-16 gap-6"
                 >
                     <div>
-                        <h1 className="text-5xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter text-primary dark:text-white leading-[0.85] mb-4">
+                        <h1 className="text-5xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter text-[#111] dark:text-white leading-[0.85] mb-4">
                             Profile
                         </h1>
                         <p className="text-gray-500 dark:text-accent/60 tracking-[0.2em] font-bold uppercase text-xs">
@@ -132,8 +132,8 @@ export default function UserProfile() {
                             }}
                             disabled={isSaving}
                             className={`group relative flex items-center justify-center space-x-3 px-8 py-4 rounded-none font-bold uppercase tracking-[0.2em] transition-all duration-300 text-xs overflow-hidden ${isEditing
-                                ? 'bg-primary dark:bg-accent text-white dark:text-primary hover:bg-gray-900 dark:hover:bg-white'
-                                : 'bg-white dark:bg-primary-light text-primary dark:text-white border border-gray-200 dark:border-accent/20 hover:border-primary dark:hover:border-accent'
+                                ? 'bg-primary dark:bg-accent text-white dark:text-[#111] hover:bg-gray-900 dark:hover:bg-white'
+                                : 'bg-white dark:bg-[#1A1A1A] text-[#111] dark:text-white border border-gray-200 dark:border-accent/20 dark:hover:border-[#222] dark:hover:border-accent'
                                 }`}
                         >
                             {isSaving ? (
@@ -162,11 +162,11 @@ export default function UserProfile() {
                         transition={{ duration: 0.6, delay: 0.1 }}
                         className="lg:col-span-4 h-auto"
                     >
-                        <div className="bg-white dark:bg-primary-light border border-gray-100 dark:border-accent/10 p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.2)] flex flex-col items-center text-center h-full relative">
+                        <div className="bg-white dark:bg-[#1A1A1A] border border-gray-100 dark:border-accent/10 p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.2)] flex flex-col items-center text-center h-full relative">
                             {/* Decorative Top Right Circle (from screenshot) */}
                             <div className="absolute top-0 right-0 w-24 h-24 bg-gray-50/50 dark:bg-accent/5 rounded-bl-[100px] pointer-events-none" />
 
-                            <div className="w-32 h-32 rounded-full bg-gray-100 dark:bg-primary-light flex items-center justify-center text-6xl font-black text-gray-300 dark:text-accent/20 uppercase mb-6 shadow-sm border border-white">
+                            <div className="w-32 h-32 rounded-full bg-gray-100 dark:bg-[#1A1A1A] flex items-center justify-center text-6xl font-black text-gray-300 dark:text-accent/20 uppercase mb-6 shadow-sm border border-white">
                                 {profile.name ? profile.name.charAt(0) : 'S'}
                             </div>
 
@@ -179,7 +179,7 @@ export default function UserProfile() {
                                     className={`${inputClasses} text-center text-2xl mb-4`}
                                 />
                             ) : (
-                                <h2 className="text-2xl font-black uppercase tracking-tight text-primary dark:text-white mb-4">
+                                <h2 className="text-2xl font-black uppercase tracking-tight text-[#111] dark:text-white mb-4">
                                     {profile.name || 'User'}
                                 </h2>
                             )}
@@ -199,9 +199,9 @@ export default function UserProfile() {
                                             <Package className="w-4 h-4 mr-3" />
                                             <span>Total Orders</span>
                                         </div>
-                                        <span className="font-bold text-primary dark:text-white">
+                                        <span className="font-bold text-[#111] dark:text-white">
                                             {orderCount === null ? (
-                                                <div className="w-4 h-4 border-2 border-primary dark:border-white border-t-transparent rounded-full animate-spin"></div>
+                                                <div className="w-4 h-4 border-2 dark:border-[#222] border-t-transparent rounded-full animate-spin"></div>
                                             ) : (
                                                 orderCount
                                             )}
@@ -212,7 +212,7 @@ export default function UserProfile() {
                                             <Clock className="w-4 h-4 mr-3" />
                                             <span>Member Since</span>
                                         </div>
-                                        <span className="font-bold text-primary dark:text-white">
+                                        <span className="font-bold text-[#111] dark:text-white">
                                             {new Date(user.metadata?.creationTime || Date.now()).getFullYear()}
                                         </span>
                                     </div>
@@ -223,7 +223,7 @@ export default function UserProfile() {
                                     </p>
                                     <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                        <span className="text-xs font-bold uppercase tracking-wider text-primary dark:text-white">Active Clearance</span>
+                                        <span className="text-xs font-bold uppercase tracking-wider text-[#111] dark:text-white">Active Clearance</span>
                                     </div>
                                 </div>
                             </div>
@@ -238,10 +238,10 @@ export default function UserProfile() {
                         className="lg:col-span-8 flex flex-col gap-8"
                     >
                         {/* Communications Card */}
-                        <div className="bg-white dark:bg-primary-light border border-gray-100 dark:border-accent/10 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.2)]">
+                        <div className="bg-white dark:bg-[#1A1A1A] border border-gray-100 dark:border-accent/10 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.2)]">
                             <div className="flex items-center mb-6 pb-6 border-b border-gray-100 dark:border-accent/10">
                                 <Phone className="w-4 h-4 text-gray-400 dark:text-accent/50 mr-4" />
-                                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-primary dark:text-white">
+                                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-[#111] dark:text-white">
                                     Communications
                                 </h3>
                             </div>
@@ -259,7 +259,7 @@ export default function UserProfile() {
                                         className={inputClasses}
                                     />
                                 ) : (
-                                    <p className="text-xl font-medium text-primary dark:text-white">
+                                    <p className="text-xl font-medium text-[#111] dark:text-white">
                                         {profile.phone || '91 9207755908'}
                                     </p>
                                 )}
@@ -267,11 +267,11 @@ export default function UserProfile() {
                         </div>
 
                         {/* Logistics Card */}
-                        <div className="bg-white dark:bg-primary-light border border-gray-100 dark:border-accent/10 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.2)]">
+                        <div className="bg-white dark:bg-[#1A1A1A] border border-gray-100 dark:border-accent/10 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.2)]">
                             <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-100 dark:border-accent/10">
                                 <div className="flex items-center">
                                     <MapPin className="w-4 h-4 text-gray-400 dark:text-accent/50 mr-4" />
-                                    <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-primary dark:text-white">
+                                    <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-[#111] dark:text-white">
                                         Logistics Routing
                                     </h3>
                                 </div>
@@ -373,25 +373,25 @@ export default function UserProfile() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             <div>
                                                 <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 dark:text-accent/50 mb-2">Street</p>
-                                                <p className="text-sm font-medium text-primary dark:text-white break-words">{profile.shipping_address.street}</p>
+                                                <p className="text-sm font-medium text-[#111] dark:text-white break-words">{profile.shipping_address.street}</p>
                                             </div>
                                             <div>
                                                 <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 dark:text-accent/50 mb-2">City / Region</p>
-                                                <p className="text-sm font-medium text-primary dark:text-white break-words">
+                                                <p className="text-sm font-medium text-[#111] dark:text-white break-words">
                                                     {profile.shipping_address.city}{profile.shipping_address.state ? `, ${profile.shipping_address.state}` : ''}
                                                 </p>
                                             </div>
                                             <div>
                                                 <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 dark:text-accent/50 mb-2">Postal Code</p>
-                                                <p className="text-sm font-medium text-primary dark:text-white">{profile.shipping_address.zip || '—'}</p>
+                                                <p className="text-sm font-medium text-[#111] dark:text-white">{profile.shipping_address.zip || '—'}</p>
                                             </div>
                                             <div>
                                                 <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 dark:text-accent/50 mb-2">Country</p>
-                                                <p className="text-sm font-medium text-primary dark:text-white">{profile.shipping_address.country || '—'}</p>
+                                                <p className="text-sm font-medium text-[#111] dark:text-white">{profile.shipping_address.country || '—'}</p>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="py-16 text-center bg-gray-50/50 dark:bg-primary-light/10 border border-dashed border-gray-200 dark:border-accent/20 rounded-xl">
+                                        <div className="py-16 text-center bg-gray-50/50 dark:bg-[#1A1A1A]/10 border border-dashed border-gray-200 dark:border-accent/20 rounded-xl">
                                             <Home className="w-8 h-8 text-gray-300 dark:text-accent/30 mx-auto mb-4" />
                                             <p className="text-sm font-bold uppercase tracking-[0.1em] text-gray-600 dark:text-accent/80">No Logistics Data Found</p>
                                             <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">Enter edit mode to set your secure routing information.</p>

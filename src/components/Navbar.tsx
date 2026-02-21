@@ -16,12 +16,22 @@ export default function Navbar({ onShowAuth, onShowCart, onNavigate }: NavbarPro
     const { theme, toggleTheme } = useTheme();
     const [showMenu, setShowMenu] = useState(false);
 
+    const handleLogoClick = () => {
+        onNavigate?.('home');
+        setTimeout(() => {
+            const el = document.getElementById('about');
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
+    };
+
     return (
         <nav className="w-full bg-[#F6F6F6] dark:bg-[#121212] font-sans text-[#111] dark:text-white transition-colors duration-500 pt-8 pb-4 relative z-50">
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center md:items-start gap-4 md:gap-0">
                 <div>
                     <h2
-                        onClick={() => onNavigate?.('home')}
+                        onClick={handleLogoClick}
                         className="cursor-pointer text-4xl md:text-5xl font-black uppercase tracking-tighter mb-0 md:mb-4"
                     >
                         NOX
