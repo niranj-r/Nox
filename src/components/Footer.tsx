@@ -36,7 +36,8 @@ export default function Footer({ onNavigate }: FooterProps) {
               NOX
             </button>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              Premium curated collections of designer jewelry and accessories. Discover pieces that express your style.
+              Thank you for being part of my very first chapter.
+              More than jewellery, it’s the start of something.
             </p>
           </div>
           <nav>

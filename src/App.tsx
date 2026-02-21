@@ -1,5 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShoppingCart } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
+import { useCart } from './contexts/CartContext';
 import AuthModal from './components/AuthModal';
 import ProductCatalog from './components/ProductCatalog';
 import CartSidebar from './components/CartSidebar';
@@ -13,10 +16,17 @@ type Page = 'home' | 'checkout' | 'dashboard' | 'profile';
 
 function App() {
   const { loading } = useAuth();
+  const { items } = useCart();
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [showCart, setShowCart] = useState(false);
+
+  useEffect(() => {
+    const handleOpenCart = () => setShowCart(true);
+    window.addEventListener('open-cart', handleOpenCart);
+    return () => window.removeEventListener('open-cart', handleOpenCart);
+  }, []);
 
   const handleShowAuth = (mode: 'login' | 'register') => {
     setAuthMode(mode);
@@ -77,6 +87,36 @@ function App() {
         />
 
         <Footer onNavigate={(page) => setCurrentPage(page as Page)} />
+
+        {/* Global Persistent View Cart Banner */}
+        <AnimatePresence>
+          {items.length > 0 && currentPage !== 'checkout' && (
+            <motion.div
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 50, scale: 0.9 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed bottom-6 right-6 z-50 flex items-center justify-between gap-4 p-4 md:px-6 md:py-4 bg-[#111] dark:bg-white text-white dark:text-[#111] shadow-2xl rounded-xl border border-white/10 dark:border-black/10 max-w-sm w-[calc(100%-3rem)] md:w-auto"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-white/10 dark:bg-black/5 flex items-center justify-center">
+                  <ShoppingCart className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.1em] leading-tight">Items in Vault</p>
+                  <p className="text-[10px] text-white/60 dark:text-black/60 hidden sm:block">You have pending items.</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowCart(true)}
+                className="bg-white dark:bg-[#111] text-[#111] dark:text-white px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-[0.1em] hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors whitespace-nowrap"
+              >
+                View Cart
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
       </main>
     </div>
   );

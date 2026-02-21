@@ -41,7 +41,13 @@ export default function Navbar({ onShowAuth, onShowCart, onNavigate }: NavbarPro
                 <div className="flex flex-col items-center md:items-end gap-4 mt-0 md:mt-2 w-full md:w-auto">
                     {/* Header Controls */}
                     <div className="flex flex-wrap items-center justify-center md:justify-end gap-4 md:gap-6 text-[10px] font-bold tracking-[0.15em] uppercase text-black/60 dark:text-white/60 w-full">
-                        <span onClick={() => onNavigate?.('home')} className="cursor-pointer hover:text-black dark:hover:text-white transition-colors">Collections</span>
+                        <span onClick={() => {
+                            onNavigate?.('home');
+                            setTimeout(() => {
+                                const el = document.getElementById('collections');
+                                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }, 100);
+                        }} className="cursor-pointer hover:text-black dark:hover:text-white transition-colors">Collections</span>
 
                         <button onClick={toggleTheme} className="hover:text-black dark:hover:text-white transition-colors">
                             {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}

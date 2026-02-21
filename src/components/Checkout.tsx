@@ -86,12 +86,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
     }
   };
 
-  const generateOrderNumber = () => {
-    const timestamp = Date.now().toString(36);
-    const random = Math.random().toString(36).substring(2, 7);
-    return `ORD-${timestamp}-${random}`.toUpperCase();
-  };
-
+  // Order number logic moved to transaction
   const generateBillId = () => {
     const timestamp = Date.now().toString(36);
     const random = Math.random().toString(36).substring(2, 7);
@@ -112,7 +107,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
     setLoading(true);
 
     try {
-      const orderNo = generateOrderNumber();
+      let orderNo = '';
       const billId = generateBillId();
 
       const totalAmount = getTotalPrice();
@@ -121,7 +116,11 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
       const newOrderRef = doc(collection(db, 'orders'));
 
       await runTransaction(db, async (transaction) => {
-        // 1. Reads: Check specific stock for all items
+        // 1. Reads: Get global counter
+        const counterRef = doc(db, 'metadata', 'order_counter');
+        const counterDoc = await transaction.get(counterRef);
+
+        // Check specific stock for all items
         const productReads = await Promise.all(items.map(async (item) => {
           const productDocRef = doc(db, 'products', item.product_id);
           const productDoc = await transaction.get(productDocRef);
@@ -134,6 +133,18 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
         }));
 
         // 2. Logic & Validations
+        let currentOrderIndex = 1;
+        if (counterDoc.exists() && typeof counterDoc.data().count === 'number') {
+          currentOrderIndex = counterDoc.data().count + 1;
+        }
+
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yy = String(today.getFullYear()).slice(-2);
+        // Format: NX-ddmmyy-incremental
+        orderNo = `NX-${dd}${mm}${yy}-${currentOrderIndex}`;
+
         const orderItems = [];
 
         for (const { doc, cartItem, name } of productReads) {
@@ -163,6 +174,8 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
         }
 
         // 3. Writes
+        transaction.set(counterRef, { count: currentOrderIndex }, { merge: true });
+
         for (const { ref: productRef, doc: productDoc, cartItem } of productReads) {
           const productData = productDoc.data();
           if (!productData) continue; // Should not happen due to check above

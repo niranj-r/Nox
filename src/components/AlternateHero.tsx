@@ -14,9 +14,10 @@ interface Product {
 interface AlternateHeroProps {
     products: Product[];
     onProductClick: (index: number) => void;
+    onNavigate?: (page: string) => void;
 }
 
-export default function AlternateHero({ products, onProductClick }: AlternateHeroProps) {
+export default function AlternateHero({ products, onProductClick, onNavigate }: AlternateHeroProps) {
 
     if (!products || products.length === 0) {
         return (
@@ -33,11 +34,17 @@ export default function AlternateHero({ products, onProductClick }: AlternateHer
 
             {/* Collection Title section */}
             <div className="max-w-[1400px] mx-auto px-6 lg:px-12 mb-20 flex justify-between items-end">
-                <div className="flex flex-col gap-2">
-                    <span className="text-[10px] md:text-xs tracking-[0.2em] font-bold text-black/40 dark:text-white/40 uppercase">
+                <div
+                    className="flex flex-col gap-2 cursor-pointer group"
+                    onClick={() => {
+                        const el = document.getElementById('collections');
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                >
+                    <span className="text-[10px] md:text-xs tracking-[0.2em] font-bold text-black/40 dark:text-white/40 uppercase group-hover:text-black dark:group-hover:text-white transition-colors">
                         COLLECTION 01 / 01
                     </span>
-                    <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-black uppercase tracking-tighter leading-none">
+                    <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-black uppercase tracking-tighter leading-none group-hover:opacity-80 transition-opacity">
                         COLLECTION
                     </h1>
                 </div>
