@@ -34,33 +34,43 @@ export default function AlternateCollections({ products, externalSelectedIndex =
         const container = scrollRef.current;
         const item = itemRefs.current[idx];
         if (item) {
+            // calculate item's position relative to the container, not relative to scroll
             const scrollLeft = item.offsetLeft - (container.clientWidth / 2) + (item.clientWidth / 2);
             container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
         }
     };
 
+    const isProgrammaticScroll = useRef(false);
+
     useEffect(() => {
-        if (products.length > 0) {
-            // Smoothly scroll to the external selected index when it changes
+        if (products.length > 0 && selectedIndex !== undefined) {
+            isProgrammaticScroll.current = true;
             const timer = setTimeout(() => {
                 scrollToItem(selectedIndex);
-            }, 100);
+                // Reset flag after smooth scroll is likely finished
+                setTimeout(() => { isProgrammaticScroll.current = false; }, 600);
+            }, 50);
             return () => clearTimeout(timer);
         }
-    }, [selectedIndex, products]);
+    }, [selectedIndex, products.length]);
 
     const handleScroll = () => {
-        if (!scrollRef.current) return;
+        if (!scrollRef.current || isProgrammaticScroll.current) return;
         const container = scrollRef.current;
-        const scrollCenter = container.scrollLeft + container.clientWidth / 2;
+
+        // Calculate the center point of the visible viewport of the scrolling container
+        const scrollCenter = container.scrollLeft + (container.clientWidth / 2);
 
         let closestIdx = 0;
         let minDistance = Infinity;
 
         itemRefs.current.forEach((itemElement, idx) => {
             if (!itemElement) return;
-            const itemCenter = itemElement.offsetLeft + itemElement.clientWidth / 2;
+
+            // Calculate center of each item relative to the scrolling container
+            const itemCenter = itemElement.offsetLeft + (itemElement.clientWidth / 2);
             const distance = Math.abs(scrollCenter - itemCenter);
+
             if (distance < minDistance) {
                 minDistance = distance;
                 closestIdx = idx;
