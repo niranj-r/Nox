@@ -23,13 +23,7 @@ interface Product {
   review_count?: number;
 }
 
-interface ProductCatalogProps {
-  onShowAuth?: (mode: 'login' | 'register') => void;
-  onShowCart?: () => void;
-  onNavigate?: (page: string) => void;
-}
-
-export default function ProductCatalog({ onShowAuth, onShowCart, onNavigate }: ProductCatalogProps = {}) {
+export default function ProductCatalog() {
   const [products, setProducts] = useState<Product[]>([]);
   const [heroSelectedIndex, setHeroSelectedIndex] = useState(0);
   const collectionsRef = useRef<HTMLDivElement>(null);
@@ -66,9 +60,6 @@ export default function ProductCatalog({ onShowAuth, onShowCart, onNavigate }: P
       <AlternateHero
         products={products}
         onProductClick={handleHeroItemClick}
-        onShowAuth={onShowAuth}
-        onShowCart={onShowCart}
-        onNavigate={onNavigate}
       />
       <div ref={collectionsRef} id="collections">
         <AlternateCollections

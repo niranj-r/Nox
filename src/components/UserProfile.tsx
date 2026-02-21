@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { collection, query, where, getCountFromServer } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { MapPin, Edit2, Save, Phone, Mail, Home, Clock, Package, ShoppingCart, ShieldCheck } from 'lucide-react';
+import { MapPin, Edit2, Save, Phone, Mail, Home, ShoppingCart, ShieldCheck, Package, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function UserProfile() {
@@ -55,6 +55,7 @@ export default function UserProfile() {
         };
         fetchOrderCount();
     }, [user]);
+
 
     const handleSave = async () => {
         setIsSaving(true);

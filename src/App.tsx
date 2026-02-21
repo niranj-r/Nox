@@ -7,6 +7,7 @@ import Checkout from './components/Checkout';
 import Dashboard from './components/Dashboard';
 import UserProfile from './components/UserProfile';
 import Footer from './components/Footer';
+import Navbar from './components/Navbar';
 
 type Page = 'home' | 'checkout' | 'dashboard' | 'profile';
 
@@ -40,40 +41,43 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#121212] transition-smooth">
-
-
-      {currentPage === 'home' && (
-        <ProductCatalog
-          onShowAuth={handleShowAuth}
-          onShowCart={() => setShowCart(true)}
-          onNavigate={(page) => setCurrentPage(page as Page)}
-        />
-      )}
-      {currentPage === 'checkout' && (
-        <Checkout
-          onBack={() => setCurrentPage('home')}
-          onSuccess={handleCheckoutSuccess}
-        />
-      )}
-      {currentPage === 'dashboard' && <Dashboard onNavigate={(page) => setCurrentPage(page as Page)} />}
-      {currentPage === 'profile' && <UserProfile />}
-
-      {showAuth && (
-        <AuthModal
-          mode={authMode}
-          onClose={() => setShowAuth(false)}
-          onSwitchMode={setAuthMode}
-        />
-      )}
-
-      <CartSidebar
-        isOpen={showCart}
-        onClose={() => setShowCart(false)}
-        onCheckout={handleCheckout}
+    <div className="min-h-screen bg-[#F6F6F6] dark:bg-[#121212] transition-smooth flex flex-col">
+      <Navbar
+        onShowAuth={handleShowAuth}
+        onShowCart={() => setShowCart(true)}
+        onNavigate={(page) => setCurrentPage(page as Page)}
       />
+      <main className="flex-grow">
 
-      <Footer onNavigate={(page) => setCurrentPage(page as Page)} />
+
+        {currentPage === 'home' && (
+          <ProductCatalog />
+        )}
+        {currentPage === 'checkout' && (
+          <Checkout
+            onBack={() => setCurrentPage('home')}
+            onSuccess={handleCheckoutSuccess}
+          />
+        )}
+        {currentPage === 'dashboard' && <Dashboard onNavigate={(page) => setCurrentPage(page as Page)} />}
+        {currentPage === 'profile' && <UserProfile />}
+
+        {showAuth && (
+          <AuthModal
+            mode={authMode}
+            onClose={() => setShowAuth(false)}
+            onSwitchMode={setAuthMode}
+          />
+        )}
+
+        <CartSidebar
+          isOpen={showCart}
+          onClose={() => setShowCart(false)}
+          onCheckout={handleCheckout}
+        />
+
+        <Footer onNavigate={(page) => setCurrentPage(page as Page)} />
+      </main>
     </div>
   );
 }
