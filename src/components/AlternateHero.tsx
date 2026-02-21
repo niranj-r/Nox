@@ -121,7 +121,7 @@ export default function AlternateHero({ products, onProductClick, onShowAuth, on
 
 
             {/* Continuously Scrolling Marquee of Rings */}
-            <div className="relative w-full overflow-hidden bg-transparent mb-16 h-[280px]">
+            <div className="relative w-full overflow-hidden bg-transparent mb-16 h-[320px]">
                 {/* 
                     Using framer-motion approach for a seamless marquee loop. 
                     We duplicate the products array to ensure no gaps as it scrolls.
@@ -145,15 +145,20 @@ export default function AlternateHero({ products, onProductClick, onShowAuth, on
                         <div
                             key={`${p.id}-${idx}`}
                             onClick={() => onProductClick(idx % products.length)} // modulo to get original index
-                            className="relative flex-shrink-0 flex items-center justify-center cursor-pointer group"
-                            style={{ width: '180px', height: '180px' }}
+                            className="relative flex-shrink-0 flex flex-col items-center justify-center cursor-pointer group"
+                            style={{ width: '180px', height: '240px' }}
                         >
                             <img
                                 src={p.primary_image}
                                 alt={p.name}
                                 draggable={false}
-                                className="max-w-full max-h-full object-contain drop-shadow-xl dark:drop-shadow-[0_20px_20px_rgba(255,237,168,0.05)] transition-transform duration-500 group-hover:scale-125 group-hover:-translate-y-4"
+                                className="w-full h-[180px] object-contain drop-shadow-xl dark:drop-shadow-[0_20px_20px_rgba(255,237,168,0.05)] transition-transform duration-500 group-hover:scale-125 group-hover:-translate-y-4"
                             />
+                            <div className="mt-6 text-center">
+                                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-primary dark:text-white transition-colors duration-300">
+                                    {p.name}
+                                </span>
+                            </div>
                         </div>
                     ))}
                 </motion.div>
