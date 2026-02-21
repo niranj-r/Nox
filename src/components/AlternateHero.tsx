@@ -1,9 +1,4 @@
 import { motion } from 'framer-motion';
-import { useAuth } from '../contexts/AuthContext';
-import { useCart } from '../contexts/CartContext';
-import { useTheme } from '../contexts/ThemeContext';
-import { User, Sun, Moon } from 'lucide-react';
-import { useState } from 'react';
 
 interface Product {
     id: string;
@@ -19,16 +14,9 @@ interface Product {
 interface AlternateHeroProps {
     products: Product[];
     onProductClick: (index: number) => void;
-    onShowAuth?: (mode: 'login' | 'register') => void;
-    onShowCart?: () => void;
-    onNavigate?: (page: string) => void;
 }
 
-export default function AlternateHero({ products, onProductClick, onShowAuth, onShowCart, onNavigate }: AlternateHeroProps) {
-    const { user, profile, signOut } = useAuth();
-    const { getTotalItems } = useCart();
-    const { theme, toggleTheme } = useTheme();
-    const [showMenu, setShowMenu] = useState(false);
+export default function AlternateHero({ products, onProductClick }: AlternateHeroProps) {
 
     if (!products || products.length === 0) {
         return (
@@ -41,66 +29,7 @@ export default function AlternateHero({ products, onProductClick, onShowAuth, on
     }
 
     return (
-        <section className="w-full bg-[#F6F6F6] dark:bg-[#121212] overflow-hidden font-sans text-[#111] dark:text-white transition-colors duration-500 select-none pb-12 pt-8">
-
-            {/* Header Layout Similar to BECANE Reference */}
-            <div className="max-w-[1400px] mx-auto px-6 lg:px-12 flex justify-between items-start mb-16">
-                <div>
-                    <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
-                        NOX
-                    </h2>
-                    <div className="flex gap-4 text-[10px] font-bold tracking-[0.15em] text-black/40 dark:text-white/40 uppercase">
-                        <span className="text-black dark:text-white">ALL <span className="opacity-40">{products.length.toString().padStart(2, '0')}</span></span>
-                        <span>STORIES <span className="opacity-40">04</span></span>
-                    </div>
-                </div>
-
-                <div className="flex flex-col items-end gap-4 mt-2 relative z-50">
-                    {/* Header Controls */}
-                    <div className="flex items-center gap-6 text-[10px] font-bold tracking-[0.15em] uppercase text-black/60 dark:text-white/60">
-                        <span onClick={() => onNavigate?.('home')} className="cursor-pointer hover:text-black dark:hover:text-white transition-colors">Collections</span>
-
-
-                        <button onClick={toggleTheme} className="hover:text-black dark:hover:text-white transition-colors">
-                            {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-                        </button>
-
-                        {user && profile ? (
-                            <div className="relative">
-                                <button onClick={() => setShowMenu(!showMenu)} className="flex items-center gap-2 hover:text-black dark:hover:text-white transition-colors">
-                                    <User className="w-4 h-4" />
-                                    <span>{profile.name}</span>
-                                </button>
-                                {showMenu && (
-                                    <div className="absolute right-0 mt-4 w-48 bg-white dark:bg-[#1A1A1A] border border-black/5 dark:border-white/10 shadow-lg py-4 flex flex-col items-start px-4 gap-4 z-50">
-                                        <button onClick={() => { onNavigate?.('dashboard'); setShowMenu(false); }} className="w-full text-left hover:text-black dark:hover:text-white transition-colors uppercase tracking-[0.15em] text-[10px] font-bold">My Orders</button>
-                                        <button onClick={() => { onNavigate?.('profile'); setShowMenu(false); }} className="w-full text-left hover:text-black dark:hover:text-white transition-colors uppercase tracking-[0.15em] text-[10px] font-bold">Profile</button>
-                                        <button onClick={async () => { await signOut(); setShowMenu(false); }} className="w-full text-left text-red-500 hover:text-red-700 transition-colors uppercase tracking-[0.15em] text-[10px] font-bold">Sign Out</button>
-                                    </div>
-                                )}
-                            </div>
-                        ) : (
-                            <button onClick={() => onShowAuth?.('login')} className="hover:text-black dark:hover:text-white transition-colors">
-                                Sign In
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Collection and Cart Context */}
-                    <div className="flex items-center gap-6">
-                        <div className="hidden md:flex items-center gap-4 bg-white dark:bg-[#0A0A0A] px-4 py-2 border border-black/5 dark:border-white/10 shadow-sm text-[10px] font-bold tracking-[0.15em] uppercase text-black/60 dark:text-white/60">
-                            <span>Collection</span>
-                            <span>01 / 01</span>
-                        </div>
-                        <div
-                            onClick={() => onShowCart?.()}
-                            className="flex items-center gap-2 text-[10px] font-bold tracking-[0.15em] uppercase text-black/60 dark:text-white/60 cursor-pointer hover:text-black dark:hover:text-white transition-colors">
-                            <span>Cart</span>
-                            <span>{getTotalItems().toString().padStart(2, '0')}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <section className="w-full bg-[#F6F6F6] dark:bg-[#121212] overflow-hidden font-sans text-[#111] dark:text-white transition-colors duration-500 select-none pb-12 pt-2">
 
             {/* Collection Title section */}
             <div className="max-w-[1400px] mx-auto px-6 lg:px-12 mb-20 flex justify-between items-end">

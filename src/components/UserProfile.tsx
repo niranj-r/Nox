@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
-import { collection, query, where, getCountFromServer } from 'firebase/firestore';
-import { db } from '../lib/firebase';
-import { MapPin, Edit2, Save, Phone, Mail, Home, Clock, Package, ShoppingCart, ShieldCheck } from 'lucide-react';
+import { MapPin, Edit2, Save, Phone, Mail, Home, ShoppingCart, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function UserProfile() {
@@ -11,7 +9,6 @@ export default function UserProfile() {
     const { items: cartItems } = useCart();
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
-    const [orderCount, setOrderCount] = useState<number | null>(null);
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -40,21 +37,6 @@ export default function UserProfile() {
         }
     }, [profile]);
 
-    useEffect(() => {
-        const fetchOrderCount = async () => {
-            if (user) {
-                try {
-                    const q = query(collection(db, 'orders'), where('user_id', '==', user.uid));
-                    const snapshot = await getCountFromServer(q);
-                    setOrderCount(snapshot.data().count);
-                } catch (error) {
-                    console.error("Error fetching order count:", error);
-                    setOrderCount(0);
-                }
-            }
-        };
-        fetchOrderCount();
-    }, [user]);
 
     const handleSave = async () => {
         setIsSaving(true);
