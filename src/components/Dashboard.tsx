@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { MessageCircle, Download, Package, Clock, CheckCircle, Truck } from 'lucide-react';
-import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { MessageCircle, Download, Package, Clock, CheckCircle, Truck, XCircle } from 'lucide-react';
+import { collection, query, where, getDocs, doc, runTransaction } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -85,6 +85,8 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
         return <Truck className="w-5 h-5 text-blue-500" />;
       case 'out_for_delivery':
         return <Truck className="w-5 h-5 text-orange-500" />;
+      case 'cancelled':
+        return <XCircle className="w-5 h-5 text-red-500" />;
       default:
         return <Package className="w-5 h-5 text-gray-500" />;
     }
@@ -106,6 +108,8 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
         return 'Out for Delivery';
       case 'delivered':
         return 'Delivered';
+      case 'cancelled':
+        return 'Cancelled';
       default:
         return status;
     }
@@ -199,6 +203,47 @@ Thank you for your purchase!
     window.open(`https://wa.me/?text=${message}`, '_blank');
   };
 
+  const handleCancelOrder = async (orderId: string, orderNo: string, orderItems: Order['order_items']) => {
+    if (!window.confirm(`Are you sure you want to cancel order #${orderNo}?`)) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await runTransaction(db, async (transaction) => {
+        // 1. Read product stocks to restore
+        const productReads = await Promise.all(orderItems.map(async (item) => {
+          const productRef = doc(db, 'products', item.product_id);
+          const productDoc = await transaction.get(productRef);
+          return { ref: productRef, doc: productDoc, quantity: item.quantity };
+        }));
+
+        // 2. Perform updates
+        for (const { ref, doc, quantity } of productReads) {
+          if (doc.exists()) {
+            const currentStock = doc.data().stock_quantity || 0;
+            transaction.update(ref, {
+              stock_quantity: currentStock + quantity,
+              is_low_stock: (currentStock + quantity) < 10
+            });
+          }
+        }
+
+        // 3. Mark order as cancelled
+        const orderRef = doc(db, 'orders', orderId);
+        transaction.update(orderRef, { status: 'cancelled' });
+      });
+
+      // Reload orders
+      await loadOrders();
+    } catch (error) {
+      console.error("Error canceling order:", error);
+      alert('Failed to cancel order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -282,6 +327,16 @@ Thank you for your purchase!
                       <MessageCircle className="w-4 h-4" />
                       <span className="text-[10px] font-bold tracking-[0.1em] uppercase">Help</span>
                     </button>
+
+                    {(order.status === 'pending_payment' || order.status === 'payment_under_review') && (
+                      <button
+                        onClick={() => handleCancelOrder(order.id, order.order_no, order.order_items)}
+                        className="flex items-center space-x-2 px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 transition-smooth"
+                      >
+                        <XCircle className="w-4 h-4" />
+                        <span className="text-[10px] font-bold tracking-[0.1em] uppercase">Cancel</span>
+                      </button>
+                    )}
                   </div>
                 </div>
 
