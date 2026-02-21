@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Filter, SlidersHorizontal } from 'lucide-react';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import ProductCard from './ProductCard';
-import BrandShowcase from './BrandShowcase';
+import AlternateHero from './AlternateHero';
+import AlternateCollections from './AlternateCollections';
 import ProductModal from './ProductModal';
 
 interface Product {
@@ -31,6 +32,16 @@ export default function ProductCatalog() {
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+
+  const [heroSelectedIndex, setHeroSelectedIndex] = useState(0);
+  const collectionsRef = useRef<HTMLDivElement>(null);
+
+  const handleHeroItemClick = (index: number) => {
+    setHeroSelectedIndex(index);
+    if (collectionsRef.current) {
+      collectionsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const [filters, setFilters] = useState({
     material: '',
@@ -123,7 +134,17 @@ export default function ProductCatalog() {
 
   return (
     <>
-      <BrandShowcase />
+      <AlternateHero
+        products={products.slice(0, 10)}
+        onProductClick={handleHeroItemClick}
+      />
+      <div ref={collectionsRef}>
+        <AlternateCollections
+          products={products.slice(0, 10)}
+          externalSelectedIndex={heroSelectedIndex}
+          onSelectionChange={setHeroSelectedIndex}
+        />
+      </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
