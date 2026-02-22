@@ -9,6 +9,7 @@ interface Product {
     collection: string;
     primary_image: string;
     stock_quantity: number;
+    ring_sizes?: string[];
 }
 
 interface AlternateHeroProps {

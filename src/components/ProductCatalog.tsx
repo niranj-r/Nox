@@ -22,6 +22,7 @@ interface Product {
   created_at?: any;
   rating?: number;
   review_count?: number;
+  ring_sizes?: string[];
 }
 
 export default function ProductCatalog() {

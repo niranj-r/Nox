@@ -316,7 +316,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                             </button>
                             <h3 className="text-2xl font-black uppercase tracking-tighter text-primary dark:text-white mb-6 text-center">Ring Size Guide</h3>
                             <div className="w-full bg-gray-50 dark:bg-[#121212] rounded-xl p-4 flex items-center justify-center">
-                                <img src="/ring-size-guide.png" alt="Ring Chart" className="max-w-full h-auto object-contain rounded drop-shadow-md" />
+                                <img src="/Ring_Chart.png" alt="Ring Chart" className="max-w-full h-auto object-contain rounded drop-shadow-md" />
                             </div>
                             <p className="text-sm font-medium tracking-wide text-center text-gray-500 dark:text-gray-400 mt-6 max-w-md">
                                 For best accuracy, measure the inside diameter of an existing ring or wrap a string around your finger to find the circumference.

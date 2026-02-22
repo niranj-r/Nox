@@ -241,7 +241,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
               <X className="w-5 h-5 text-gray-800 dark:text-gray-200" />
             </button>
             <h3 className="text-2xl font-serif font-bold text-primary dark:text-white mb-6 text-center">Ring Size Guide</h3>
-            <img src="/ring-size-guide.png" alt="Ring Chart" className="w-full h-auto object-contain rounded" />
+            <img src="/Ring_Chart.png" alt="Ring Chart" className="w-full h-auto object-contain rounded" />
             <p className="text-sm text-center text-gray-500 mt-4">For best accuracy, measure the inside diameter of an existing ring.</p>
           </div>
         </div>
