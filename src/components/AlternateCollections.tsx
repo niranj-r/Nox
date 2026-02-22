@@ -324,6 +324,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                         </motion.div>
                     </motion.div>
                 )}
+
             </AnimatePresence>
         </>
     );
