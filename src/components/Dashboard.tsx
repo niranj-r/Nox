@@ -200,7 +200,7 @@ Thank you for your purchase!
     const message = encodeURIComponent(
       `Hi, I need help with Order #${orderNo}`
     );
-    window.open(`https://wa.me/?text=${message}`, '_blank');
+    window.open(`https://wa.me/918078322848?text=${message}`, '_blank');
   };
 
   const handleCancelOrder = async (orderId: string, orderNo: string, orderItems: Order['order_items']) => {
