@@ -14,7 +14,7 @@ export default function About() {
                     <span className="text-[10px] md:text-xs tracking-[0.2em] font-bold text-gray-500 dark:text-white/60 mb-4 block uppercase transition-colors duration-500">
                         The Story
                     </span>
-                    <h2 className="text-4xl md:text-5xl lg:text-[4.5rem] font-black uppercase tracking-tighter leading-[0.85] break-words text-[#111] dark:text-white transition-colors duration-500">
+                    <h2 className="text-4xl md:text-5xl lg:text-[4.5rem] font-black uppercase tracking-tighter leading-[0.85] whitespace-nowrap text-[#111] dark:text-white transition-colors duration-500">
                         ABOUT<br />NOX
                     </h2>
                 </motion.div>
