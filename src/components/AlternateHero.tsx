@@ -43,10 +43,10 @@ export default function AlternateHero({ products, onProductClick, onNavigate }: 
                     }}
                 >
                     <span className="text-[10px] md:text-xs tracking-[0.2em] font-bold text-black/40 dark:text-white/40 uppercase group-hover:text-black dark:group-hover:text-white transition-colors">
-                        COLLECTION 01 / 01
+                        CHAPTER 01 / 01
                     </span>
                     <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-black uppercase tracking-tighter leading-none group-hover:opacity-80 transition-opacity">
-                        COLLECTION
+                        JUNGLE
                     </h1>
                 </div>
 
