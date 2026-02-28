@@ -96,7 +96,7 @@ export default function Footer({ onNavigate }: FooterProps) {
           <div className="mb-2 md:mb-0">
             &copy; {new Date().getFullYear()} NOX Inc. All rights reserved.
           </div>
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 font-semibold">
             {/* placeholder icons for payment methods */}
             <span className="font-regular">Designed and Developed by UR Flow</span>
           </div>
