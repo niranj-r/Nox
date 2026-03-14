@@ -54,7 +54,6 @@ export default function Footer({ onNavigate }: FooterProps) {
                 ))}
               </ul>
             </nav>
-
             {/* Social icons */}
             <div className="flex items-center gap-5">
               {/* Instagram */}
