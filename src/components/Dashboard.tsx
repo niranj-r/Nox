@@ -147,6 +147,7 @@ Date: ${new Date(order.created_at).toLocaleDateString()}
 Status: PENDING PAYMENT
 
 Items:
+${order.order_items.map((item) => `${item.product.name} x${item.quantity} - ₹${item.total_price.toFixed(2)}`).join('\n')}
 ${order.order_items.map((item) => `${item.product.name}${item.ring_size ? ` (Size ${item.ring_size})` : ''} x${item.quantity} - ₹${item.total_price.toFixed(2)}`).join('\n')}
 
 Subtotal: ₹${order.total_amount.toFixed(2)}
@@ -177,7 +178,7 @@ Date: ${new Date(order.created_at).toLocaleDateString()}
 Payment Confirmed: ${order.payment_confirmed_at ? new Date(order.payment_confirmed_at).toLocaleDateString() : 'N/A'}
 
 Items:
-${order.order_items.map((item) => `${item.product.name}${item.ring_size ? ` (Size ${item.ring_size})` : ''} x${item.quantity} - ₹${item.total_price.toFixed(2)}`).join('\n')}
+${order.order_items.map((item) => `${item.product.name} x${item.quantity} - $${item.total_price.toFixed(2)}`).join('\n')}
 
 Subtotal: ₹${order.total_amount.toFixed(2)}
 Discount: -₹${order.discount_amount.toFixed(2)}
@@ -201,7 +202,7 @@ Thank you for your purchase!
     const message = encodeURIComponent(
       `Hi, I need help with Order #${orderNo}`
     );
-    window.open(`https://wa.me/?text=${message}`, '_blank');
+    window.open(`https://wa.me/918078322848?text=${message}`, '_blank');
   };
 
   const handleCancelOrder = async (orderId: string, orderNo: string, orderItems: Order['order_items']) => {

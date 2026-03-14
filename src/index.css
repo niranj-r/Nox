@@ -5,17 +5,17 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #003631;
+  --color-primary: #000000;
   --color-accent: #FFEDA8;
   --color-bg-light: #FAFAFA;
-  --color-bg-dark: #003631;
+  --color-bg-dark: #000000;
   --color-text-light: #1A1A1A;
   --color-text-dark: #FFFFFF;
 
   /* RGB mapped variables for dynamic theme switching in Tailwind */
-  --tw-primary: 0 54 49;
-  --tw-primary-light: 0 77 69;
-  --tw-primary-dark: 0 36 32;
+  --tw-primary: 0 0 0;
+  --tw-primary-light: 26 26 26;
+  --tw-primary-dark: 0 0 0;
 
   --tw-accent: 255 237 168;
   --tw-accent-light: 255 245 204;

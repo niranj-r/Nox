@@ -222,7 +222,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
       const whatsappMessage = encodeURIComponent(
         `Hi, I'd like to pay for Order #${orderNo}. Bill ID: ${billId}\n\nTotal Amount: ₹${finalAmount.toFixed(2)}`
       );
-      const whatsappUrl = `https://wa.me/?text=${whatsappMessage}`;
+      const whatsappUrl = `https://wa.me/918078322848?text=${whatsappMessage}`;
       window.open(whatsappUrl, '_blank');
 
       onSuccess(newOrderRef.id);

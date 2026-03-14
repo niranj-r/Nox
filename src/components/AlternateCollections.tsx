@@ -6,6 +6,7 @@ import { useCart } from '../contexts/CartContext';
 interface Product {
     id: string;
     name: string;
+    description?: string;
     price: number;
     material: string;
     color: string;
@@ -122,7 +123,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
             <section className="relative w-full h-[100vh] min-h-[800px] bg-gray-50 dark:bg-[#121212] overflow-hidden font-sans text-primary dark:text-white flex flex-col md:flex-row border-b border-gray-200 dark:border-white/10 transition-colors duration-500 select-none">
 
                 {/* LEFT PANEL */}
-                <div className="w-full md:w-[35%] lg:w-[30%] h-[40%] md:h-full py-8 px-6 lg:px-20 lg:py-16 flex flex-col justify-center relative z-20 border-b md:border-b-0 md:border-r border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-[#121212] shadow-[10px_0_30px_-10px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_30px_-10px_rgba(0,0,0,0.5)] transition-colors duration-500">
+                <div className="w-full md:w-[35%] lg:w-[30%] h-[50%] md:h-full py-6 md:py-8 px-6 lg:px-20 lg:py-16 flex flex-col overflow-y-auto no-scrollbar relative z-20 border-b md:border-b-0 md:border-r border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-[#121212] shadow-[10px_0_30px_-10px_rgba(0,0,0,0.05)] dark:shadow-[10px_0_30px_-10px_rgba(0,0,0,0.5)] transition-colors duration-500">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={selectedProduct.id}
@@ -130,17 +131,17 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.3, ease: "easeOut" }}
-                            className="flex flex-col h-full justify-center"
+                            className="flex flex-col h-auto min-h-full justify-center"
                         >
-                            <p className="text-[10px] md:text-xs tracking-[0.2em] font-bold text-gray-500 dark:text-white/60 mb-2 uppercase transition-colors duration-500">
+                            <p className="text-[10px] md:text-xs tracking-[0.2em] font-bold text-gray-500 dark:text-white/60 mb-2 uppercase transition-colors duration-500 shrink-0">
                                 Item {(selectedIndex + 1).toString().padStart(2, '0')} / {products.length.toString().padStart(2, '0')}
                             </p>
 
-                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight mb-8 md:mb-12 leading-[0.85] whitespace-nowrap text-primary dark:text-white transition-colors duration-500 mr-4">
+                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight mb-4 md:mb-12 leading-[0.85] whitespace-nowrap text-black dark:text-white transition-colors duration-500 mr-4 shrink-0">
                                 {selectedProduct.name}
                             </h2>
 
-                            <div className="grid grid-cols-2 gap-y-6 md:gap-y-8 gap-x-4 w-full text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] mt-auto md:mt-0">
+                            <div className="grid grid-cols-2 gap-y-4 md:gap-y-8 gap-x-4 w-full text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] mt-auto md:mt-0 shrink-0">
                                 <div className="text-gray-500 dark:text-white/60 transition-colors duration-500">Status</div>
                                 <div className="text-gray-900 dark:text-white transition-colors duration-500">{selectedProduct.stock_quantity > 0 ? 'Available' : 'Archive'}</div>
 
@@ -154,18 +155,24 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                                 <div className="text-gray-900 dark:text-white transition-colors duration-500">₹{selectedProduct.price?.toFixed(2)}</div>
                             </div>
 
+                            {selectedProduct.description && (
+                                <p className="mt-4 md:mt-6 text-[10px] sm:text-xs text-gray-500 dark:text-white/50 leading-relaxed tracking-wide normal-case font-medium line-clamp-3 transition-colors duration-500 shrink-0">
+                                    {selectedProduct.description}
+                                </p>
+                            )}
+
                             {selectedProduct.ring_sizes && selectedProduct.ring_sizes.length > 0 && (
-                                <div className="mt-8 transition-opacity duration-300">
+                                <div className="mt-4 md:mt-8 transition-opacity duration-300 shrink-0">
                                     <div className="flex justify-between items-center mb-3">
                                         <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.1em] text-gray-500 dark:text-white/60">Select Size</span>
-                                        <button onClick={() => setShowRingChart(true)} className="text-[10px] md:text-xs underline text-primary dark:text-white uppercase tracking-[0.1em] hover:text-gray-500 transition-colors">Size Guide</button>
+                                        <button onClick={() => setShowRingChart(true)} className="text-[10px] md:text-xs underline text-black dark:text-white uppercase tracking-[0.1em] hover:text-gray-500 transition-colors">Size Guide</button>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
                                         {selectedProduct.ring_sizes.map(size => (
                                             <button
                                                 key={size}
                                                 onClick={() => setSelectedSize(size)}
-                                                className={`px-4 py-2 text-xs font-bold uppercase tracking-[0.1em] transition-all duration-300 ${selectedSize === size ? 'bg-primary dark:bg-white text-white dark:text-[#121212] border border-primary dark:border-white' : 'bg-transparent text-primary dark:text-white border border-gray-300 dark:border-[#4A4A4A] hover:border-gray-500 dark:hover:border-gray-300'}`}
+                                                className={`px-4 py-2 text-xs font-bold uppercase tracking-[0.1em] transition-all duration-300 ${selectedSize === size ? 'bg-black dark:bg-white text-white dark:text-[#121212] border border-black dark:border-white' : 'bg-transparent text-black dark:text-white border border-gray-300 dark:border-[#4A4A4A] hover:border-gray-500 dark:hover:border-gray-300'}`}
                                             >
                                                 {size}
                                             </button>
@@ -177,11 +184,11 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                             <button
                                 onClick={() => handleAddToCart(selectedProduct)}
                                 disabled={selectedProduct.stock_quantity === 0 || addingToCart === selectedProduct.id}
-                                className={`mt-10 md:mt-12 w-full py-4 px-6 flex items-center justify-center space-x-3 rounded-lg font-bold uppercase tracking-[0.2em] transition-all duration-300 text-xs ${selectedProduct.stock_quantity === 0
+                                className={`mt-6 md:mt-12 w-full py-3 md:py-4 px-6 flex items-center justify-center space-x-3 rounded-lg font-bold uppercase tracking-[0.2em] transition-all duration-300 text-xs shrink-0 ${selectedProduct.stock_quantity === 0
                                     ? 'bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed'
                                     : addingToCart === selectedProduct.id
                                         ? 'bg-green-600 text-white shadow-lg shadow-green-600/20'
-                                        : 'bg-primary dark:bg-white text-white dark:text-[#363636] hover:bg-primary-light dark:hover:bg-gray-100 shadow-xl shadow-primary/20 dark:shadow-white/10 hover:-translate-y-1'
+                                        : 'bg-black dark:bg-white text-white dark:text-[#363636] hover:bg-gray-800 dark:hover:bg-gray-100 shadow-xl shadow-black/20 dark:shadow-white/10 hover:-translate-y-1'
                                     }`}
                             >
                                 {addingToCart === selectedProduct.id ? (
@@ -201,7 +208,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                 <div
                     ref={scrollRef}
                     onScroll={handleScroll}
-                    className="w-full md:w-[65%] lg:w-[70%] h-[60%] md:h-full overflow-x-auto overflow-y-hidden no-scrollbar flex items-center relative cursor-grab active:cursor-grabbing bg-gray-100 dark:bg-black/20 snap-x snap-mandatory transition-colors duration-500"
+                    className="w-full md:w-[65%] lg:w-[70%] h-[50%] md:h-full overflow-x-auto overflow-y-hidden no-scrollbar flex items-center relative cursor-grab active:cursor-grabbing bg-gray-100 dark:bg-black/20 snap-x snap-mandatory transition-colors duration-500"
                 >
                     {/* Track */}
                     <div
@@ -261,7 +268,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                                 transition={{ duration: 0.5 }}
                                 className="flex flex-col items-start mb-16"
                             >
-                                <h3 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tighter text-primary dark:text-white mb-4 text-left transition-colors duration-500">
+                                <h3 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tighter text-black dark:text-white mb-4 text-left transition-colors duration-500">
                                     Finer Details
                                 </h3>
                                 <p className="text-gray-500 dark:text-white/60 tracking-[0.2em] font-bold uppercase text-xs text-left transition-colors duration-500">
@@ -314,7 +321,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                             <button onClick={() => setShowRingChart(false)} className="absolute top-4 right-4 p-2 bg-gray-100 dark:bg-[#2A2A2A] rounded-full hover:bg-gray-200 dark:hover:bg-[#363636] transition-colors z-10">
                                 <X className="w-5 h-5 text-gray-800 dark:text-gray-200" />
                             </button>
-                            <h3 className="text-2xl font-black uppercase tracking-tighter text-primary dark:text-white mb-6 text-center">Ring Size Guide</h3>
+                            <h3 className="text-2xl font-black uppercase tracking-tighter text-black dark:text-white mb-6 text-center">Ring Size Guide</h3>
                             <div className="w-full bg-gray-50 dark:bg-[#121212] rounded-xl p-4 flex items-center justify-center">
                                 <img src="/Ring_Chart.png" alt="Ring Chart" className="max-w-full h-auto object-contain rounded drop-shadow-md" />
                             </div>
@@ -324,6 +331,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                         </motion.div>
                     </motion.div>
                 )}
+
             </AnimatePresence>
         </>
     );
