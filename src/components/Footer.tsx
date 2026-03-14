@@ -90,12 +90,12 @@ export default function Footer({ onNavigate }: FooterProps) {
       {/* bottom bar with copyright and payment logos */}
       <div className="bg-gray-200 dark:bg-[#121212] border-t border-gray-300 dark:border-[#4A4A4A]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600 dark:text-gray-400">
-          <div className="mb-2 md:mb-0">
+          <div className="mb-2 md:mb-0 font-semibold">
             &copy; {new Date().getFullYear()} NOX Inc. All rights reserved.
           </div>
           <div className="flex space-x-4">
             {/* placeholder icons for payment methods */}
-            <span className="font-semibold">Powered by UR Flow</span>
+            <span className="font-regular">Designed and Developed by UR Flow</span>
           </div>
         </div>
       </div>
