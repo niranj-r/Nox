@@ -58,7 +58,7 @@ export default function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebar
                       {item.ring_size && <span className="text-gray-500 text-sm ml-2">Size {item.ring_size}</span>}
                     </h3>
                     <p className="text-sm text-primary dark:text-white font-bold mb-2">
-                      ${item.product?.price.toFixed(2)}
+                      ₹{item.product?.price.toFixed(2)}
                     </p>
 
                     <div className="flex items-center justify-between">
@@ -97,7 +97,7 @@ export default function CartSidebar({ isOpen, onClose, onCheckout }: CartSidebar
             <div className="flex justify-between items-center mb-4">
               <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-700 dark:text-gray-300">Total</span>
               <span className="text-2xl font-black uppercase tracking-tighter text-primary dark:text-white">
-                ${getTotalPrice().toFixed(2)}
+                ₹{getTotalPrice().toFixed(2)}
               </span>
             </div>
 

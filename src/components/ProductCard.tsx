@@ -133,7 +133,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
 
         <div className="flex items-center justify-between mt-auto">
           <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-            ${product.price.toFixed(2)}
+            ₹{product.price.toFixed(2)}
           </p>
 
           <div className="h-10">

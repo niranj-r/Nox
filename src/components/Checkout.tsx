@@ -63,7 +63,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
 
       const total = getTotalPrice();
       if (total < data.min_order_amount) {
-        alert(`Minimum order amount is $${data.min_order_amount}`);
+        alert(`Minimum order amount is ₹${data.min_order_amount}`);
         return;
       }
 
@@ -160,6 +160,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
           orderItems.push({
             product_id: cartItem.product_id,
             quantity: cartItem.quantity,
+            ...(cartItem.ring_size && { ring_size: cartItem.ring_size }),
             unit_price: productData.price,
             total_price: productData.price * cartItem.quantity,
             product: {
@@ -219,7 +220,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
       await clearCart();
 
       const whatsappMessage = encodeURIComponent(
-        `Hi, I'd like to pay for Order #${orderNo}. Bill ID: ${billId}\n\nTotal Amount: $${finalAmount.toFixed(2)}`
+        `Hi, I'd like to pay for Order #${orderNo}. Bill ID: ${billId}\n\nTotal Amount: ₹${finalAmount.toFixed(2)}`
       );
       const whatsappUrl = `https://wa.me/?text=${whatsappMessage}`;
       window.open(whatsappUrl, '_blank');
@@ -270,14 +271,15 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
                   <div className="flex-[2] flex flex-col justify-center">
                     <p className="font-bold text-gray-900 dark:text-gray-100 leading-tight">
                       {item.product?.name}
+                      {item.ring_size && <span className="text-gray-500 text-sm ml-2">Size {item.ring_size}</span>}
                     </p>
                     <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      Qty: {item.quantity} × ${item.product?.price.toFixed(2)}
+                      Qty: {item.quantity} × ₹{item.product?.price.toFixed(2)}
                     </p>
                   </div>
                   <div className="flex-1 flex items-center justify-end">
                     <p className="font-bold text-gray-900 dark:text-gray-100">
-                      ${((item.product?.price || 0) * item.quantity).toFixed(2)}
+                      ₹{((item.product?.price || 0) * item.quantity).toFixed(2)}
                     </p>
                   </div>
                 </div>
@@ -287,19 +289,19 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
             <div className="border-t border-gray-200 dark:border-[#4A4A4A] pt-4 space-y-3">
               <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
                 <span>Subtotal</span>
-                <span>${totalAmount.toFixed(2)}</span>
+                <span>₹{totalAmount.toFixed(2)}</span>
               </div>
 
               {discount && (
                 <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
                   <span>Discount ({discount.code})</span>
-                  <span>-${discountAmount.toFixed(2)}</span>
+                  <span>-₹{discountAmount.toFixed(2)}</span>
                 </div>
               )}
 
               <div className="flex justify-between text-xl lg:text-2xl font-black uppercase tracking-tighter text-primary dark:text-white pt-4 border-t border-gray-200 dark:border-[#4A4A4A]">
                 <span>Total</span>
-                <span>${finalAmount.toFixed(2)}</span>
+                <span>₹{finalAmount.toFixed(2)}</span>
               </div>
             </div>
           </div>

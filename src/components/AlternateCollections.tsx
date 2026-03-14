@@ -151,7 +151,7 @@ export default function AlternateCollections({ products, externalSelectedIndex =
                                 <div className="text-gray-900 dark:text-white transition-colors duration-500">{selectedProduct.material || 'Sterling'}</div>
 
                                 <div className="text-gray-500 dark:text-white/60 transition-colors duration-500">Value</div>
-                                <div className="text-gray-900 dark:text-white transition-colors duration-500">${selectedProduct.price?.toFixed(2)}</div>
+                                <div className="text-gray-900 dark:text-white transition-colors duration-500">₹{selectedProduct.price?.toFixed(2)}</div>
                             </div>
 
                             {selectedProduct.ring_sizes && selectedProduct.ring_sizes.length > 0 && (

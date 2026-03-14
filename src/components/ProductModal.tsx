@@ -164,7 +164,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
               <div className="border-t border-gray-200 dark:border-[#4A4A4A] pt-6">
                 <div className="flex items-center justify-between mb-6">
                   <span className="text-3xl font-bold text-primary dark:text-white">
-                    ${product.price.toFixed(2)}
+                    ₹{product.price.toFixed(2)}
                   </span>
 
                   <div className="flex items-center space-x-3">
