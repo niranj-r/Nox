@@ -30,10 +30,10 @@ export default function About() {
                     className="max-w-[900px]"
                 >
                     <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-[#111] dark:text-white leading-[1.3] mb-8">
-                        NOX is more than just a brand to me — it’s something I’ve dreamed about building for a long time. I’ve always wanted to create something of my own, something real, and this is my very first step into that world. Starting with rings felt natural to me. There’s something deeply personal about them — the way they quietly become part of your everyday life, carrying memories, moods, and meaning.
+                        NOX is more than just a brand to me, it’s a dream I’ve carried for a long time. I’ve always wanted to build my own identity through creation, to bring an idea to life that truly represents who I am. Starting with rings felt natural. There’s something deeply personal about them, the way they quietly become part of your everyday life, holding memories, moods, and meaning without ever needing to say a word. NOX is my first real step into turning that long-held vision into reality.
                     </p>
                     <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-tight leading-[1.3] mb-12 text-[#111]/60 dark:text-white/60">
-                        This first launch includes 12 carefully chosen designs, each one handpicked and thoughtfully crafted with a vintage, aesthetic soul that reflects what I genuinely love. It’s a small beginning, but it comes with big hopes and many more collections to follow. When you choose NOX, you’re not just buying a ring — you’re becoming part of a journey that started with a simple dream and the courage to finally begin.
+                        This first launch features 12 carefully selected designs, each chosen with intention and crafted with an animal aesthetic that reflects what I genuinely love. It’s a small beginning, but it carries big ambition and a future filled with many more collections. Rings are only the start for NOX, there is much more ahead. When you choose NOX, you’re not just wearing jewellery, you’re becoming part of a journey that began with a simple dream and the courage to finally bring it to life.
                     </p>
 
                     <div className="flex items-center gap-6">

@@ -17,7 +17,7 @@ interface Profile {
     street: string;
     city: string;
     state: string;
-    zip: string;
+    pincode: string;
     country: string;
   };
 }

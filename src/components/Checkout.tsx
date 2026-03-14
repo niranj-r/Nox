@@ -342,7 +342,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
                 <p className="mt-2">{profile.shipping_address.street}</p>
                 <p>
                   {profile.shipping_address.city}, {profile.shipping_address.state}{' '}
-                  {profile.shipping_address.zip}
+                  {profile.shipping_address.pincode}
                 </p>
                 <p>{profile.shipping_address.country}</p>
               </div>

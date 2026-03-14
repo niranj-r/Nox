@@ -26,7 +26,7 @@ export default function AuthModal({ mode, onClose, onSwitchMode }: AuthModalProp
     street: '',
     city: '',
     state: '',
-    zip: '',
+    pincode: '',
     country: '',
   });
 
@@ -58,7 +58,7 @@ export default function AuthModal({ mode, onClose, onSwitchMode }: AuthModalProp
         street: registerData.street,
         city: registerData.city,
         state: registerData.state,
-        zip: registerData.zip,
+        pincode: registerData.pincode,
         country: registerData.country,
       },
     });
@@ -237,16 +237,17 @@ export default function AuthModal({ mode, onClose, onSwitchMode }: AuthModalProp
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    ZIP Code
+                <div className="md:col-span-1">
+                  <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">
+                    Pincode
                   </label>
                   <input
                     type="text"
                     required
-                    value={registerData.zip}
-                    onChange={(e) => setRegisterData({ ...registerData, zip: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-[#4A4A4A] rounded-lg focus:ring-2 focus:ring-primary dark:focus:ring-white focus:border-transparent bg-white dark:bg-[#121212] text-gray-900 dark:text-gray-100 transition-smooth"
+                    value={registerData.pincode}
+                    onChange={(e) => setRegisterData({ ...registerData, pincode: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-[#4A4A4A] rounded-lg focus:ring-2 focus:ring-primary dark:focus:ring-white bg-gray-50 dark:bg-[#121212] text-gray-900 dark:text-gray-100 transition-smooth"
+                    placeholder="682001"
                   />
                 </div>
 
