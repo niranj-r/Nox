@@ -19,7 +19,7 @@ export default function UserProfile() {
             street: '',
             city: '',
             state: '',
-            zip: '',
+            pincode: '',
             country: ''
         }
     });
@@ -33,7 +33,7 @@ export default function UserProfile() {
                     street: profile.shipping_address?.street || '',
                     city: profile.shipping_address?.city || '',
                     state: profile.shipping_address?.state || '',
-                    zip: profile.shipping_address?.zip || '',
+                    pincode: profile.shipping_address?.pincode || '',
                     country: profile.shipping_address?.country || ''
                 }
             });
@@ -115,7 +115,7 @@ export default function UserProfile() {
                                             street: profile.shipping_address?.street || '',
                                             city: profile.shipping_address?.city || '',
                                             state: profile.shipping_address?.state || '',
-                                            zip: profile.shipping_address?.zip || '',
+                                            pincode: profile.shipping_address?.pincode || '',
                                             country: profile.shipping_address?.country || ''
                                         }
                                     });
@@ -278,7 +278,7 @@ export default function UserProfile() {
                                 {isEditing && (
                                     <button
                                         onClick={() => {
-                                            setFormData(prev => ({ ...prev, shipping_address: { street: '', city: '', state: '', zip: '', country: '' } }));
+                                            setFormData(prev => ({ ...prev, shipping_address: { street: '', city: '', state: '', pincode: '', country: '' } }));
                                         }}
                                         className="text-[10px] font-bold uppercase tracking-wider text-gray-400 hover:text-red-500 transition-colors"
                                     >
@@ -337,16 +337,16 @@ export default function UserProfile() {
                                         </div>
                                         <div>
                                             <label className="block text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 dark:text-accent/50 mb-2">
-                                                Postal Code
+                                                Pincode
                                             </label>
                                             <input
                                                 type="text"
-                                                value={formData.shipping_address.zip}
+                                                value={formData.shipping_address.pincode}
                                                 onChange={(e) => setFormData({
                                                     ...formData,
-                                                    shipping_address: { ...formData.shipping_address, zip: e.target.value }
+                                                    shipping_address: { ...formData.shipping_address, pincode: e.target.value }
                                                 })}
-                                                placeholder="10001"
+                                                placeholder="682001"
                                                 className={inputClasses}
                                             />
                                         </div>
@@ -382,8 +382,8 @@ export default function UserProfile() {
                                                 </p>
                                             </div>
                                             <div>
-                                                <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 dark:text-accent/50 mb-2">Postal Code</p>
-                                                <p className="text-sm font-medium text-[#111] dark:text-white">{profile.shipping_address.zip || '—'}</p>
+                                                <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 dark:text-accent/50 mb-2">Pincode</p>
+                                                <p className="text-sm font-medium text-[#111] dark:text-white">{profile.shipping_address.pincode || '—'}</p>
                                             </div>
                                             <div>
                                                 <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 dark:text-accent/50 mb-2">Country</p>

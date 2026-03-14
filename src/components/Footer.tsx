@@ -36,8 +36,7 @@ export default function Footer({ onNavigate }: FooterProps) {
               NOX
             </button>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              Thank you for being part of my very first chapter.
-              More than jewellery, it’s the start of something.
+              Thank you for being part of my very first chapter. More than jewellery, it’s the beginning of a dream coming to life.
             </p>
           </div>
           <div className="flex flex-col gap-6">
