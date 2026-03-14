@@ -160,6 +160,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
           orderItems.push({
             product_id: cartItem.product_id,
             quantity: cartItem.quantity,
+            ...(cartItem.ring_size && { ring_size: cartItem.ring_size }),
             unit_price: productData.price,
             total_price: productData.price * cartItem.quantity,
             product: {
@@ -270,6 +271,7 @@ export default function Checkout({ onBack, onSuccess }: CheckoutProps) {
                   <div className="flex-[2] flex flex-col justify-center">
                     <p className="font-bold text-gray-900 dark:text-gray-100 leading-tight">
                       {item.product?.name}
+                      {item.ring_size && <span className="text-gray-500 text-sm ml-2">Size {item.ring_size}</span>}
                     </p>
                     <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
                       Qty: {item.quantity} × ₹{item.product?.price.toFixed(2)}

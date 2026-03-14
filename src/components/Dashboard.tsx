@@ -19,6 +19,7 @@ interface Order {
   order_items: Array<{
     product_id: string;
     quantity: number;
+    ring_size?: string;
     unit_price: number;
     total_price: number;
     product_snapshot: any;
@@ -147,6 +148,7 @@ Status: PENDING PAYMENT
 
 Items:
 ${order.order_items.map((item) => `${item.product.name} x${item.quantity} - ₹${item.total_price.toFixed(2)}`).join('\n')}
+${order.order_items.map((item) => `${item.product.name}${item.ring_size ? ` (Size ${item.ring_size})` : ''} x${item.quantity} - ₹${item.total_price.toFixed(2)}`).join('\n')}
 
 Subtotal: ₹${order.total_amount.toFixed(2)}
 Discount: -₹${order.discount_amount.toFixed(2)}
@@ -176,7 +178,7 @@ Date: ${new Date(order.created_at).toLocaleDateString()}
 Payment Confirmed: ${order.payment_confirmed_at ? new Date(order.payment_confirmed_at).toLocaleDateString() : 'N/A'}
 
 Items:
-${order.order_items.map((item) => `${item.product.name} x${item.quantity} - ₹${item.total_price.toFixed(2)}`).join('\n')}
+${order.order_items.map((item) => `${item.product.name} x${item.quantity} - $${item.total_price.toFixed(2)}`).join('\n')}
 
 Subtotal: ₹${order.total_amount.toFixed(2)}
 Discount: -₹${order.discount_amount.toFixed(2)}
@@ -369,6 +371,7 @@ Thank you for your purchase!
                         <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                             {item.product?.name || item.product_snapshot?.name}
+                            {item.ring_size && <span className="text-gray-500 text-xs ml-2">Size {item.ring_size}</span>}
                           </p>
                           <p className="text-xs text-gray-600 dark:text-gray-400">
                             Qty: {item.quantity}

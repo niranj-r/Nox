@@ -165,26 +165,28 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                 <div className="flex items-center justify-between mb-6">
                   <span className="text-3xl font-bold text-black dark:text-white">
                     ₹{product.price.toFixed(2)}
-                  </span>
+                    <span className="text-3xl font-bold text-primary dark:text-white">
+                      ₹{product.price.toFixed(2)}
+                    </span>
 
-                  <div className="flex items-center space-x-3">
-                    <label className="text-sm text-gray-600 dark:text-gray-400">Quantity:</label>
-                    <div className="flex items-center border border-gray-300 dark:border-[#4A4A4A] rounded-lg">
-                      <button
-                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-[#363636] transition-smooth"
-                      >
-                        -
-                      </button>
-                      <span className="px-4 py-2 text-gray-900 dark:text-gray-100">{quantity}</span>
-                      <button
-                        onClick={() => setQuantity(Math.min(product.stock_quantity, quantity + 1))}
-                        className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-[#363636] transition-smooth"
-                      >
-                        +
-                      </button>
+                    <div className="flex items-center space-x-3">
+                      <label className="text-sm text-gray-600 dark:text-gray-400">Quantity:</label>
+                      <div className="flex items-center border border-gray-300 dark:border-[#4A4A4A] rounded-lg">
+                        <button
+                          onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                          className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-[#363636] transition-smooth"
+                        >
+                          -
+                        </button>
+                        <span className="px-4 py-2 text-gray-900 dark:text-gray-100">{quantity}</span>
+                        <button
+                          onClick={() => setQuantity(Math.min(product.stock_quantity, quantity + 1))}
+                          className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-[#363636] transition-smooth"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
-                  </div>
                 </div>
 
                 <button
