@@ -27,10 +27,16 @@ export default function AlternateHero({ products, onProductClick, onNavigate }: 
         if (!el || isInteracting || products.length === 0) return;
 
         let animationId: number;
+        // On iOS, sometimes requestAnimationFrame pauses if not fully active.
+        // Also smooth scroll left manually can battle with momentum scrolling.
+        // We use a slightly different approach: a periodic small scroll instead of per-frame.
+        // OR we just ensure the frame loop is robust. Let's stick to requestAnimationFrame but 
+        // add a small fallback or check.
+
         const scrollSpeed = 0.5; // Smooth scroll speed
 
         const step = () => {
-            if (el) {
+            if (el && !isInteracting) {
                 el.scrollLeft += scrollSpeed;
                 handleScrollWrap(el);
             }
@@ -73,13 +79,15 @@ export default function AlternateHero({ products, onProductClick, onNavigate }: 
             if (inner && inner.children.length >= N * 3) {
                 const firstItem = inner.children[0] as HTMLElement;
                 const secondPeriodItem = inner.children[N] as HTMLElement;
-                // Add a small delay for layouts to settle
-                setTimeout(() => {
+                
+                // We need to wait for images to load or layout to compute
+                const raf = requestAnimationFrame(() => {
                     const periodWidth = secondPeriodItem.offsetLeft - firstItem.offsetLeft;
                     if (periodWidth > 0 && el.scrollLeft === 0) {
                         el.scrollLeft = periodWidth;
                     }
-                }, 100);
+                });
+                return () => cancelAnimationFrame(raf);
             }
         };
         initScroll();
@@ -130,7 +138,9 @@ export default function AlternateHero({ products, onProductClick, onNavigate }: 
                 onMouseLeave={() => setIsInteracting(false)}
                 onTouchStart={() => setIsInteracting(true)}
                 onTouchEnd={() => setIsInteracting(false)}
+                onTouchMove={() => setIsInteracting(true)} // Crucial for iOS to detect active touch
                 className="relative w-full overflow-x-auto overflow-y-hidden no-scrollbar bg-transparent mb-16 h-[320px] flex items-center cursor-grab active:cursor-grabbing"
+                style={{ WebkitOverflowScrolling: 'touch' }} // Smooth momentum scrolling on iOS
             >
                 <div className="flex items-center gap-16 md:gap-24 w-max px-8 lg:px-16" style={{ height: "100%" }}>
                     {[...products, ...products, ...products].map((p, idx) => (

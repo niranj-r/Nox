@@ -97,7 +97,7 @@ export default function Footer({ onNavigate }: FooterProps) {
           </div>
           <div className="flex space-x-4">
             {/* placeholder icons for payment methods */}
-            <span className="font-semibold">Designed and Developed by UR Flow</span>
+            <span className="font-semibold">Powered by UR Flow</span>
           </div>
         </div>
       </div>
