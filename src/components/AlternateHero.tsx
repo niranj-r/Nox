@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { useRef, useEffect, useState } from 'react';
 
 interface Product {
     id: string;
@@ -19,6 +19,71 @@ interface AlternateHeroProps {
 }
 
 export default function AlternateHero({ products, onProductClick, onNavigate }: AlternateHeroProps) {
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const [isInteracting, setIsInteracting] = useState(false);
+
+    useEffect(() => {
+        const el = scrollRef.current;
+        if (!el || isInteracting || products.length === 0) return;
+
+        let animationId: number;
+        const scrollSpeed = 0.5; // Smooth scroll speed
+
+        const step = () => {
+            if (el) {
+                el.scrollLeft += scrollSpeed;
+                handleScrollWrap(el);
+            }
+            animationId = requestAnimationFrame(step);
+        };
+
+        animationId = requestAnimationFrame(step);
+
+        return () => cancelAnimationFrame(animationId);
+    }, [isInteracting, products.length]);
+
+    const handleScrollWrap = (el: HTMLDivElement) => {
+        const inner = el.children[0] as HTMLElement;
+        if (!inner) return;
+
+        const N = products.length;
+        if (N === 0 || inner.children.length < N * 3) return;
+
+        const firstItem = inner.children[0] as HTMLElement;
+        const secondPeriodItem = inner.children[N] as HTMLElement;
+        const periodWidth = secondPeriodItem.offsetLeft - firstItem.offsetLeft;
+
+        if (periodWidth <= 0) return;
+
+        if (el.scrollLeft >= periodWidth * 2) {
+            el.scrollLeft -= periodWidth;
+        } else if (el.scrollLeft <= 0) {
+            el.scrollLeft += periodWidth;
+        }
+    };
+
+    // Initial position setup to allow scrolling left immediately
+    useEffect(() => {
+        const el = scrollRef.current;
+        if (!el || products.length === 0) return;
+
+        const initScroll = () => {
+            const inner = el.children[0] as HTMLElement;
+            const N = products.length;
+            if (inner && inner.children.length >= N * 3) {
+                const firstItem = inner.children[0] as HTMLElement;
+                const secondPeriodItem = inner.children[N] as HTMLElement;
+                // Add a small delay for layouts to settle
+                setTimeout(() => {
+                    const periodWidth = secondPeriodItem.offsetLeft - firstItem.offsetLeft;
+                    if (periodWidth > 0 && el.scrollLeft === 0) {
+                        el.scrollLeft = periodWidth;
+                    }
+                }, 100);
+            }
+        };
+        initScroll();
+    }, [products.length]);
 
     if (!products || products.length === 0) {
         return (
@@ -58,27 +123,17 @@ export default function AlternateHero({ products, onProductClick, onNavigate }: 
 
 
             {/* Continuously Scrolling Marquee of Rings */}
-            <div className="relative w-full overflow-hidden bg-transparent mb-16 h-[320px]">
-                {/* 
-                    Using framer-motion approach for a seamless marquee loop. 
-                    We duplicate the products array to ensure no gaps as it scrolls.
-                */}
-                <motion.div
-                    className="flex items-center gap-16 md:gap-24 absolute top-0 left-0"
-                    animate={{
-                        x: ['0%', '-50%'], // Move from 0 to -50% (since we duplicated items, 50% is the end of the first set)
-                    }}
-                    transition={{
-                        x: {
-                            repeat: Infinity,
-                            repeatType: "loop",
-                            duration: products.length * 3, // Speed based on item count
-                            ease: "linear",
-                        },
-                    }}
-                    style={{ width: "max-content", height: "100%" }}
-                >
-                    {[...products, ...products].map((p, idx) => (
+            <div 
+                ref={scrollRef}
+                onScroll={(e) => handleScrollWrap(e.currentTarget)}
+                onMouseEnter={() => setIsInteracting(true)}
+                onMouseLeave={() => setIsInteracting(false)}
+                onTouchStart={() => setIsInteracting(true)}
+                onTouchEnd={() => setIsInteracting(false)}
+                className="relative w-full overflow-x-auto overflow-y-hidden no-scrollbar bg-transparent mb-16 h-[320px] flex items-center cursor-grab active:cursor-grabbing"
+            >
+                <div className="flex items-center gap-16 md:gap-24 w-max px-8 lg:px-16" style={{ height: "100%" }}>
+                    {[...products, ...products, ...products].map((p, idx) => (
                         <div
                             key={`${p.id}-${idx}`}
                             onClick={() => onProductClick(idx % products.length)} // modulo to get original index
@@ -98,7 +153,7 @@ export default function AlternateHero({ products, onProductClick, onNavigate }: 
                             </div>
                         </div>
                     ))}
-                </motion.div>
+                </div>
             </div>
 
             {/* Footer Discover section */}
