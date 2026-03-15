@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 
 interface Product {
     id: string;
@@ -20,24 +20,46 @@ interface AlternateHeroProps {
 
 export default function AlternateHero({ products, onProductClick, onNavigate }: AlternateHeroProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
-    const [isInteracting, setIsInteracting] = useState(false);
-
     useEffect(() => {
         const el = scrollRef.current;
-        if (!el || isInteracting || products.length === 0) return;
+        if (!el || products.length === 0) return;
 
         let animationId: number;
-        // On iOS, sometimes requestAnimationFrame pauses if not fully active.
-        // Also smooth scroll left manually can battle with momentum scrolling.
-        // We use a slightly different approach: a periodic small scroll instead of per-frame.
-        // OR we just ensure the frame loop is robust. Let's stick to requestAnimationFrame but 
-        // add a small fallback or check.
+        let isInteracting = false;
+        let isTouching = false;
+        let isHovering = false;
+        let scrollTimeout: NodeJS.Timeout;
+        let lastProgrammaticScroll = el.scrollLeft;
 
         const scrollSpeed = 0.5; // Smooth scroll speed
 
+        const handleScrollWrap = (container: HTMLDivElement) => {
+            const inner = container.children[0] as HTMLElement;
+            if (!inner) return 0;
+
+            const N = products.length;
+            if (N === 0 || inner.children.length < N * 3) return 0;
+
+            const firstItem = inner.children[0] as HTMLElement;
+            const secondPeriodItem = inner.children[N] as HTMLElement;
+            const periodWidth = secondPeriodItem.offsetLeft - firstItem.offsetLeft;
+
+            if (periodWidth <= 0) return 0;
+
+            if (container.scrollLeft >= periodWidth * 2) {
+                container.scrollLeft -= periodWidth;
+                lastProgrammaticScroll -= periodWidth;
+            } else if (container.scrollLeft <= 0) {
+                container.scrollLeft += periodWidth;
+                lastProgrammaticScroll += periodWidth;
+            }
+            return periodWidth;
+        };
+
         const step = () => {
-            if (el && !isInteracting) {
+            if (!isInteracting) {
                 el.scrollLeft += scrollSpeed;
+                lastProgrammaticScroll = el.scrollLeft;
                 handleScrollWrap(el);
             }
             animationId = requestAnimationFrame(step);
@@ -45,33 +67,65 @@ export default function AlternateHero({ products, onProductClick, onNavigate }: 
 
         animationId = requestAnimationFrame(step);
 
-        return () => cancelAnimationFrame(animationId);
-    }, [isInteracting, products.length]);
+        const handleScroll = () => {
+            handleScrollWrap(el);
 
-    const handleScrollWrap = (el: HTMLDivElement) => {
-        const inner = el.children[0] as HTMLElement;
-        if (!inner) return;
+            // If the delta is tiny, it's our tick
+            if (Math.abs(el.scrollLeft - lastProgrammaticScroll) < 2) {
+                return;
+            }
 
-        const N = products.length;
-        if (N === 0 || inner.children.length < N * 3) return;
+            // It's a user scroll (finger drag, trackpad, or momentum)
+            isInteracting = true;
+            
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                if (!isTouching && !isHovering) {
+                    isInteracting = false;
+                    lastProgrammaticScroll = el.scrollLeft;
+                }
+            }, 100); // Resume auto-scroll 100ms after last physics scroll
+        };
 
-        const firstItem = inner.children[0] as HTMLElement;
-        const secondPeriodItem = inner.children[N] as HTMLElement;
-        const periodWidth = secondPeriodItem.offsetLeft - firstItem.offsetLeft;
+        const handleMouseEnter = () => {
+            isHovering = true;
+            isInteracting = true;
+        };
 
-        if (periodWidth <= 0) return;
+        const handleMouseLeave = () => {
+            isHovering = false;
+            if (!isTouching) {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    isInteracting = false;
+                    lastProgrammaticScroll = el.scrollLeft;
+                }, 100);
+            }
+        };
 
-        if (el.scrollLeft >= periodWidth * 2) {
-            el.scrollLeft -= periodWidth;
-        } else if (el.scrollLeft <= 0) {
-            el.scrollLeft += periodWidth;
-        }
-    };
+        const handleTouchStart = () => {
+            isTouching = true;
+            isInteracting = true;
+        };
 
-    // Initial position setup to allow scrolling left immediately
-    useEffect(() => {
-        const el = scrollRef.current;
-        if (!el || products.length === 0) return;
+        const handleTouchEnd = () => {
+            isTouching = false;
+            // Don't resume immediately; let the momentum scroll handler take over
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                if (!isHovering) {
+                    isInteracting = false;
+                    lastProgrammaticScroll = el.scrollLeft;
+                }
+            }, 100);
+        };
+
+        el.addEventListener('scroll', handleScroll, { passive: true });
+        el.addEventListener('mouseenter', handleMouseEnter);
+        el.addEventListener('mouseleave', handleMouseLeave);
+        el.addEventListener('touchstart', handleTouchStart, { passive: true });
+        el.addEventListener('touchend', handleTouchEnd);
+        el.addEventListener('touchmove', handleTouchStart, { passive: true });
 
         const initScroll = () => {
             const inner = el.children[0] as HTMLElement;
@@ -80,17 +134,28 @@ export default function AlternateHero({ products, onProductClick, onNavigate }: 
                 const firstItem = inner.children[0] as HTMLElement;
                 const secondPeriodItem = inner.children[N] as HTMLElement;
                 
-                // We need to wait for images to load or layout to compute
                 const raf = requestAnimationFrame(() => {
                     const periodWidth = secondPeriodItem.offsetLeft - firstItem.offsetLeft;
                     if (periodWidth > 0 && el.scrollLeft === 0) {
                         el.scrollLeft = periodWidth;
+                        lastProgrammaticScroll = el.scrollLeft;
                     }
                 });
                 return () => cancelAnimationFrame(raf);
             }
         };
         initScroll();
+
+        return () => {
+            cancelAnimationFrame(animationId);
+            clearTimeout(scrollTimeout);
+            el.removeEventListener('scroll', handleScroll);
+            el.removeEventListener('mouseenter', handleMouseEnter);
+            el.removeEventListener('mouseleave', handleMouseLeave);
+            el.removeEventListener('touchstart', handleTouchStart);
+            el.removeEventListener('touchend', handleTouchEnd);
+            el.removeEventListener('touchmove', handleTouchStart);
+        };
     }, [products.length]);
 
     if (!products || products.length === 0) {
@@ -133,12 +198,6 @@ export default function AlternateHero({ products, onProductClick, onNavigate }: 
             {/* Continuously Scrolling Marquee of Rings */}
             <div 
                 ref={scrollRef}
-                onScroll={(e) => handleScrollWrap(e.currentTarget)}
-                onMouseEnter={() => setIsInteracting(true)}
-                onMouseLeave={() => setIsInteracting(false)}
-                onTouchStart={() => setIsInteracting(true)}
-                onTouchEnd={() => setIsInteracting(false)}
-                onTouchMove={() => setIsInteracting(true)} // Crucial for iOS to detect active touch
                 className="relative w-full overflow-x-auto overflow-y-hidden no-scrollbar bg-transparent mb-16 h-[320px] flex items-center cursor-grab active:cursor-grabbing"
                 style={{ WebkitOverflowScrolling: 'touch' }} // Smooth momentum scrolling on iOS
             >
