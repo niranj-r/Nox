@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 import { useAuth } from './contexts/AuthContext';
 import { useCart } from './contexts/CartContext';
 import AuthModal from './components/AuthModal';
@@ -11,6 +12,7 @@ import Dashboard from './components/Dashboard';
 import UserProfile from './components/UserProfile';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
+
 
 type Page = 'home' | 'checkout' | 'dashboard' | 'profile';
 
@@ -52,7 +54,22 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#F6F6F6] dark:bg-[#121212] transition-smooth flex flex-col">
+      <Helmet>
+        <title>
+          {currentPage === 'home' ? 'NOX | Premium Digital Assets & Security' :
+           currentPage === 'checkout' ? 'Checkout | NOX' :
+           currentPage === 'dashboard' ? 'Your Dashboard | NOX' :
+           'Your Profile | NOX'}
+        </title>
+        <meta name="description" content={
+          currentPage === 'home' ? 'NOX is the premier destination for high-end digital assets, security solutions, and exclusive technology.' :
+          currentPage === 'checkout' ? 'Securely complete your purchase of premium digital assets on NOX.' :
+          currentPage === 'dashboard' ? 'Manage your acquired assets and security settings in your NOX dashboard.' :
+          'Manage your personal information and security preferences on NOX.'
+        } />
+      </Helmet>
       <Navbar
+
         onShowAuth={handleShowAuth}
         onShowCart={() => setShowCart(true)}
         onNavigate={(page) => setCurrentPage(page as Page)}

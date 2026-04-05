@@ -72,9 +72,9 @@ export default function BrandShowcase() {
                         <div className="h-[40%]  p-12 flex flex-col justify-center">
                             <div className="flex gap-6 items-end">
                                 <div className="w-16 h-20 bg-black/20 overflow-hidden">
-                                    {/* Placeholder generic portrait */}
-                                    <img src="/nox_men_model.png" className="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700" />
+                                    <img src="/nox_men_model.png" alt="Male model wearing NOX jewelry" className="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700" />
                                 </div>
+
                                 <div className="text-white/80 font-serif">
                                     <div className="text-3xl">12.01</div>
                                     <div className="text-[0.6rem] tracking-widest mt-1 opacity-60 font-sans">SERIES V<br />LAUNCH</div>
@@ -88,7 +88,8 @@ export default function BrandShowcase() {
                                 style={{ y: useTransform(smoothProgress, [0, 1], [50, -50]) }}
                                 className="w-48 h-64 rounded-[100px] overflow-hidden relative shadow-2xl border border-white/5"
                             >
-                                <img src="/nox_men_rings_detail.png" className="w-full h-full object-cover scale-110" />
+                                <img src="/nox_men_rings_detail.png" alt="Detailed view of NOX men's rings" className="w-full h-full object-cover scale-110" />
+
                                 {/* Dark overlay for text readability */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                             </motion.div>
@@ -120,7 +121,8 @@ export default function BrandShowcase() {
                                 className="w-full h-full bg-[#002420] dark:bg-[#0A0A0A] rounded-t-[300px] relative overflow-hidden border-t border-x border-white/10"
                             >
                                 <div className="absolute inset-0 bg-red-900 mix-blend-multiply opacity-20" /> {/* Slight warm tint like reference */}
-                                <img src="/nox_men_model.png" className="w-full h-full object-cover opacity-90 scale-105" />
+                                <img src="/nox_men_model.png" alt="Signature series NOX model" className="w-full h-full object-cover opacity-90 scale-105" />
+
 
                                 {/* Overlay Text inside Arch */}
                                 <div className="absolute top-24 left-0 right-0 text-center">
@@ -151,7 +153,8 @@ export default function BrandShowcase() {
                                 transition={{ duration: 0.5 }}
                                 className="w-full aspect-[3/4] rounded-t-full rounded-b-full overflow-hidden border border-white/5 relative group"
                             >
-                                <img src="/nox_men_lifestyle.png" className="w-full h-full object-cover" />
+                                <img src="/nox_men_lifestyle.png" alt="NOX men's lifestyle showcase" className="w-full h-full object-cover" />
+
                                 <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
                             </motion.div>
 

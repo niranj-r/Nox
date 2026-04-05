@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /checkout
+Disallow: /dashboard
+Disallow: /profile
+
+Sitemap: https://nox.gold/sitemap.xml
+

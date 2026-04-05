@@ -44,13 +44,15 @@ export default function Footer({ onNavigate }: FooterProps) {
               <ul className="flex flex-wrap gap-8 text-[10px] font-bold tracking-[0.2em] uppercase text-gray-700 dark:text-gray-300">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <button
-                      onClick={() => handleNav(link.page)}
-                      className="hover:text-black dark:hover:text-white transition-smooth font-bold uppercase tracking-[0.2em] text-[10px]"
+                    <a
+                      href={link.page === 'collections' ? '#collections' : '/'}
+                      onClick={(e) => { e.preventDefault(); handleNav(link.page); }}
+                      className="hover:text-black dark:hover:text-white transition-smooth font-bold uppercase tracking-[0.2em] text-[10px] inline-block"
                     >
                       {link.label}
-                    </button>
+                    </a>
                   </li>
+
                 ))}
               </ul>
             </nav>

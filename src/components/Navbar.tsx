@@ -30,24 +30,34 @@ export default function Navbar({ onShowAuth, onShowCart, onNavigate }: NavbarPro
         <nav className="w-full bg-[#F6F6F6] dark:bg-[#121212] font-sans text-[#111] dark:text-white transition-colors duration-500 pt-8 pb-4 relative z-50">
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center md:items-start gap-4 md:gap-0">
                 <div>
-                    <h2
-                        onClick={handleLogoClick}
-                        className="cursor-pointer text-4xl md:text-5xl font-black uppercase tracking-tighter mb-0 md:mb-4"
+                    <a
+                        href="/"
+                        onClick={(e) => { e.preventDefault(); handleLogoClick(); }}
+                        className="cursor-pointer text-4xl md:text-5xl font-black uppercase tracking-tighter mb-0 md:mb-4 block"
                     >
                         NOX
-                    </h2>
+                    </a>
                 </div>
+
 
                 <div className="flex flex-col items-center md:items-end gap-4 mt-0 md:mt-2 w-full md:w-auto">
                     {/* Header Controls */}
                     <div className="flex flex-wrap items-center justify-center md:justify-end gap-4 md:gap-6 text-[10px] font-bold tracking-[0.15em] uppercase text-black/60 dark:text-white/60 w-full">
-                        <span onClick={() => {
-                            onNavigate?.('home');
-                            setTimeout(() => {
-                                const el = document.getElementById('collections');
-                                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            }, 100);
-                        }} className="cursor-pointer hover:text-black dark:hover:text-white transition-colors">Collections</span>
+                        <a 
+                            href="#collections"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                onNavigate?.('home');
+                                setTimeout(() => {
+                                    const el = document.getElementById('collections');
+                                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                }, 100);
+                            }} 
+                            className="cursor-pointer hover:text-black dark:hover:text-white transition-colors"
+                        >
+                            Collections
+                        </a>
+
 
                         <button onClick={toggleTheme} className="hover:text-black dark:hover:text-white transition-colors">
                             {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
